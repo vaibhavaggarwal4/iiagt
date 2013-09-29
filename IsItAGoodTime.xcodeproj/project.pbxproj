@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		6D2739E817F28F2800D88904 /* EventKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D2739E617F28F2800D88904 /* EventKit.framework */; };
 		6D2739E917F28F2800D88904 /* EventKitUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D2739E717F28F2800D88904 /* EventKitUI.framework */; };
+		6D83244117F7D38300369FD4 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D83244017F7D38300369FD4 /* LoginViewController.m */; };
 		6D9F53E117E94AED006B993F /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D9F53E017E94AED006B993F /* UIKit.framework */; };
 		6D9F53E317E94AED006B993F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D9F53E217E94AED006B993F /* Foundation.framework */; };
 		6D9F53E517E94AED006B993F /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D9F53E417E94AED006B993F /* CoreGraphics.framework */; };
@@ -46,6 +47,8 @@
 /* Begin PBXFileReference section */
 		6D2739E617F28F2800D88904 /* EventKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EventKit.framework; path = System/Library/Frameworks/EventKit.framework; sourceTree = SDKROOT; };
 		6D2739E717F28F2800D88904 /* EventKitUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EventKitUI.framework; path = System/Library/Frameworks/EventKitUI.framework; sourceTree = SDKROOT; };
+		6D83243F17F7D38300369FD4 /* LoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginViewController.h; sourceTree = "<group>"; };
+		6D83244017F7D38300369FD4 /* LoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginViewController.m; sourceTree = "<group>"; };
 		6D9F53DD17E94AED006B993F /* IsItAGoodTime.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IsItAGoodTime.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6D9F53E017E94AED006B993F /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		6D9F53E217E94AED006B993F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -162,6 +165,8 @@
 				6D9F53EF17E94AED006B993F /* AppDelegate.h */,
 				6D9F53F017E94AED006B993F /* AppDelegate.m */,
 				6D9F53F817E94AED006B993F /* MainStoryboard.storyboard */,
+				6D83243F17F7D38300369FD4 /* LoginViewController.h */,
+				6D83244017F7D38300369FD4 /* LoginViewController.m */,
 				6D9F53FB17E94AED006B993F /* ContactViewController.h */,
 				6D9F53FC17E94AED006B993F /* ContactViewController.m */,
 				6DA4C9C917EFF46100C09B82 /* MessageControllerViewController.h */,
@@ -300,6 +305,7 @@
 				6D9F53FD17E94AED006B993F /* ContactViewController.m in Sources */,
 				6DA4C9CB17EFF46100C09B82 /* MessageControllerViewController.m in Sources */,
 				6DA9036817EBC74300728787 /* AFJSONRequestOperation.m in Sources */,
+				6D83244117F7D38300369FD4 /* LoginViewController.m in Sources */,
 				6D9F540417E94AED006B993F /* SettingsViewController.m in Sources */,
 				6DA9036A17EBC74300728787 /* AFPropertyListRequestOperation.m in Sources */,
 				6DA9036517EBC74300728787 /* AFHTTPClient.m in Sources */,

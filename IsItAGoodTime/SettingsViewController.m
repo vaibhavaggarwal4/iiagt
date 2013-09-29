@@ -9,14 +9,13 @@
 #import "SettingsViewController.h"
 #import <EventKit/EventKit.h>
 #import <AddressBook/AddressBook.h>
+#import "LoginViewController.h"
 @interface SettingsViewController ()
 @property(strong,nonatomic)NSMutableArray *userContacts;
 
 @end
 
 @implementation SettingsViewController
-@synthesize loginView;
-@synthesize infoView;
 @synthesize userContacts;
 ABAddressBookRef addressBook ;
 
@@ -25,9 +24,6 @@ ABAddressBookRef addressBook ;
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
     
-    //check if loginView needs to be showed
-    //loginView.hidden=false;
-    [self addShadow];
    // [self getCalendarData];
     CFErrorRef error = NULL;
     
@@ -35,7 +31,11 @@ ABAddressBookRef addressBook ;
     
     ABAddressBookRegisterExternalChangeCallback(addressBook,addressBookChanged,(__bridge void *)(self));
     [self determineAccessToAddressBookAndHandle];
-   
+}
+
+-(void)viewDidAppear:(BOOL)animated{
+    [self checkIfNewUserAndPresentLoginView];
+
 }
 
 - (void)didReceiveMemoryWarning
@@ -43,73 +43,20 @@ ABAddressBookRef addressBook ;
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+-(void)checkIfNewUserAndPresentLoginView{
 
-- (IBAction)loginButton:(id)sender {
+    UIStoryboard *storyboard = self.storyboard;
     
-    // login the user automatically
-    //if the login is successful then only remove the loginview and go to the contacts tab
-    //else show the error and
-    //ask user to enter credentials correctly
+    LoginViewController *svc = [storyboard instantiateViewControllerWithIdentifier:@"loginView"];
+    UINavigationController *loginNavigationController = [[UINavigationController alloc]
+                                                    initWithRootViewController:svc];
+    svc.navigationController.navigationBarHidden=true;
+    [self presentViewController:loginNavigationController animated:YES completion:nil];
     
-    [UIView animateWithDuration:0.8f
-                     animations:^{loginView.alpha = 0.0;}
-                     completion:^(BOOL finished){ [loginView removeFromSuperview];
-                         //[self.tabBarController setSelectedIndex:1];
-}];
-    
-    
-    //[UIView beginAnimations:@"removeLoginView" context:NULL];
-    //[UIView setAnimationDuration:0.40f];
-    //loginView.frame=CGRectMake(loginView.center.x, loginView.center.y, 0, 0);
-
-   /* loginView.transform =
-    CGAffineTransformMakeTranslation(
-                                     loginView.frame.origin.x,
-                                     480.0f + (loginView.frame.size.height/2)  // move the whole view offscreen
-                                     );*/
-    //loginView.alpha=0;
-    //loginView.background.alpha = 0; // also fade to transparent
-   //[UIView commitAnimations];
-   // [loginView removeFromSuperview];
-    
-    
-    /*[UIView animateWithDuration:0.8f
-                     animations:^{ loginView.frame=CGRectMake(loginView.center.x, loginView.center.y, 0, 0);
-                                        }
-                     completion:^(BOOL finished){
-        [loginView removeFromSuperview];
-
-        }];*/
-    
+    //To dismiss
+    //[loginNavigationController dissmissViewController]
 }
 
-- (IBAction)closeInfoViewButton:(id)sender {
-    self.infoView.hidden=true;
-}
-
-- (IBAction)whyDoWeNeedThisInformation:(id)sender {
-    
-    /*UIView *infoView = [[UIView alloc]initWithFrame:CGRectMake(self.view.center.x,self.view.center.y, 140, 100)];
-    infoView.backgroundColor=[UIColor grayColor];
-    [self.view addSubview:infoView];*/
-
-    self.infoView.hidden=false;
-    
-    
-    
-    
-}
--(void)addShadow{
-    loginView.layer.shadowOffset = CGSizeMake(10, 10);
-    
-    loginView.layer.shadowColor = [[UIColor blackColor] CGColor];
-    
-    loginView.layer.shadowRadius = 4.0f;
-    
-    loginView.layer.shadowOpacity = 0.80f;
-    
-    loginView.layer.shadowPath = [[UIBezierPath bezierPathWithRect:loginView.layer.bounds] CGPath];
-}
 -(void)getCalendarData{
     EKEventStore *store = [[EKEventStore alloc]init];
     [store requestAccessToEntityType:EKEntityTypeEvent completion:^(BOOL granted, NSError *error) {

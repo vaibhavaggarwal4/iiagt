@@ -90,11 +90,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "IsItAGoodTime/SettingsViewController.m"
-            timestampString = "402103066.37148"
+            timestampString = "402122465.406737"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "190"
-            endingLineNumber = "190"
+            startingLineNumber = "137"
+            endingLineNumber = "137"
             landmarkName = "-getAllContactsFromAddressBook"
             landmarkType = "5">
          </BreakpointContent>

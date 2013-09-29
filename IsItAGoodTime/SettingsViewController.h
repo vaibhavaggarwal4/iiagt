@@ -9,10 +9,5 @@
 #import <UIKit/UIKit.h>
 
 @interface SettingsViewController : UIViewController
-@property (weak, nonatomic) IBOutlet UIView *loginView;
-- (IBAction)loginButton:(id)sender;
-- (IBAction)closeInfoViewButton:(id)sender;
 
-@property (weak, nonatomic) IBOutlet UIView *infoView;
-- (IBAction)whyDoWeNeedThisInformation:(id)sender;
 @end
