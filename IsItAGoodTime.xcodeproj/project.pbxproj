@@ -10,6 +10,8 @@
 		6D2739E817F28F2800D88904 /* EventKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D2739E617F28F2800D88904 /* EventKit.framework */; };
 		6D2739E917F28F2800D88904 /* EventKitUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D2739E717F28F2800D88904 /* EventKitUI.framework */; };
 		6D83244117F7D38300369FD4 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D83244017F7D38300369FD4 /* LoginViewController.m */; };
+		6D83244317F8F60700369FD4 /* SettingCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6D83244217F8F60700369FD4 /* SettingCell.xib */; };
+		6D83244617F8F64D00369FD4 /* SettingCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D83244517F8F64D00369FD4 /* SettingCell.m */; };
 		6D9F53E117E94AED006B993F /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D9F53E017E94AED006B993F /* UIKit.framework */; };
 		6D9F53E317E94AED006B993F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D9F53E217E94AED006B993F /* Foundation.framework */; };
 		6D9F53E517E94AED006B993F /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D9F53E417E94AED006B993F /* CoreGraphics.framework */; };
@@ -49,6 +51,9 @@
 		6D2739E717F28F2800D88904 /* EventKitUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EventKitUI.framework; path = System/Library/Frameworks/EventKitUI.framework; sourceTree = SDKROOT; };
 		6D83243F17F7D38300369FD4 /* LoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginViewController.h; sourceTree = "<group>"; };
 		6D83244017F7D38300369FD4 /* LoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginViewController.m; sourceTree = "<group>"; };
+		6D83244217F8F60700369FD4 /* SettingCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SettingCell.xib; sourceTree = "<group>"; };
+		6D83244417F8F64D00369FD4 /* SettingCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingCell.h; sourceTree = "<group>"; };
+		6D83244517F8F64D00369FD4 /* SettingCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingCell.m; sourceTree = "<group>"; };
 		6D9F53DD17E94AED006B993F /* IsItAGoodTime.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IsItAGoodTime.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6D9F53E017E94AED006B993F /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		6D9F53E217E94AED006B993F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -121,6 +126,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		6D83244717F8FD9D00369FD4 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				6D9F540217E94AED006B993F /* SettingsViewController.h */,
+				6D9F540317E94AED006B993F /* SettingsViewController.m */,
+				6D83244417F8F64D00369FD4 /* SettingCell.h */,
+				6D83244517F8F64D00369FD4 /* SettingCell.m */,
+				6D83244217F8F60700369FD4 /* SettingCell.xib */,
+			);
+			name = Settings;
+			sourceTree = "<group>";
+		};
 		6D9F53D417E94AED006B993F = {
 			isa = PBXGroup;
 			children = (
@@ -156,8 +173,9 @@
 		6D9F53E617E94AED006B993F /* IsItAGoodTime */ = {
 			isa = PBXGroup;
 			children = (
-				6DA9037717EBF5B500728787 /* ContactsCell.xib */,
 				6DA9035117EBC74300728787 /* AFNetworking */,
+				6D83244717F8FD9D00369FD4 /* Settings */,
+				6DA9037717EBF5B500728787 /* ContactsCell.xib */,
 				6DA9037417EBF59200728787 /* ContactsCell.h */,
 				6DA9037517EBF59200728787 /* ContactsCell.m */,
 				6DA9034F17EBC69600728787 /* ContactsTableViewController.m */,
@@ -173,8 +191,6 @@
 				6DA4C9CA17EFF46100C09B82 /* MessageControllerViewController.m */,
 				6D9F53FE17E94AED006B993F /* first.png */,
 				6D9F540017E94AED006B993F /* first@2x.png */,
-				6D9F540217E94AED006B993F /* SettingsViewController.h */,
-				6D9F540317E94AED006B993F /* SettingsViewController.m */,
 				6D9F540517E94AED006B993F /* second.png */,
 				6D9F540717E94AED006B993F /* second@2x.png */,
 				6D9F53E717E94AED006B993F /* Supporting Files */,
@@ -275,6 +291,7 @@
 			files = (
 				6D9F53EB17E94AED006B993F /* InfoPlist.strings in Resources */,
 				6D9F53F317E94AED006B993F /* Default.png in Resources */,
+				6D83244317F8F60700369FD4 /* SettingCell.xib in Resources */,
 				6D9F53F517E94AED006B993F /* Default@2x.png in Resources */,
 				6D9F53F717E94AED006B993F /* Default-568h@2x.png in Resources */,
 				6DA9037817EBF5B500728787 /* ContactsCell.xib in Resources */,
@@ -295,6 +312,7 @@
 			files = (
 				6DA9036717EBC74300728787 /* AFImageRequestOperation.m in Sources */,
 				6D9F53ED17E94AED006B993F /* main.m in Sources */,
+				6D83244617F8F64D00369FD4 /* SettingCell.m in Sources */,
 				6D9F53F117E94AED006B993F /* AppDelegate.m in Sources */,
 				6DA9036C17EBC74300728787 /* AFXMLRequestOperation.m in Sources */,
 				6DA9037617EBF59200728787 /* ContactsCell.m in Sources */,

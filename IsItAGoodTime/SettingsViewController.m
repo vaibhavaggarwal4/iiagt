@@ -10,20 +10,24 @@
 #import <EventKit/EventKit.h>
 #import <AddressBook/AddressBook.h>
 #import "LoginViewController.h"
+#import "ContactsCell.h"
+#import "SettingCell.h"
 @interface SettingsViewController ()
 @property(strong,nonatomic)NSMutableArray *userContacts;
-
+@property(strong,nonatomic)NSMutableArray *userContactNames;
+@property(strong,nonatomic)NSArray *optionList;
 @end
 
 @implementation SettingsViewController
 @synthesize userContacts;
+bool loggedIn= false;
 ABAddressBookRef addressBook ;
-
+@synthesize optionList;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
-    
+    optionList =[[NSArray alloc]initWithObjects:@"Profile",@"Font and Colors",@"Syncing preferences",@"About", nil];
    // [self getCalendarData];
     CFErrorRef error = NULL;
     
@@ -31,11 +35,101 @@ ABAddressBookRef addressBook ;
     
     ABAddressBookRegisterExternalChangeCallback(addressBook,addressBookChanged,(__bridge void *)(self));
     [self determineAccessToAddressBookAndHandle];
+    
 }
 
 -(void)viewDidAppear:(BOOL)animated{
+    
+    if(!loggedIn){
     [self checkIfNewUserAndPresentLoginView];
+        loggedIn=true;
+    }
+}
+-(void)dismissLoginViewController:(UIViewController *)loginViewController{
+    
+    [loginViewController dismissViewControllerAnimated:YES completion:nil];
+    
+}
+-(void)change{
+    NSLog(@"%@",self);
+    
+}
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    // Return the number of sections.
+    return 1;
+}
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
+    
+    return 40;
+}
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    return 50;
+}
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    // Return the number of rows in the section.
+    return [optionList count];
+}
 
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    static NSString *settingCellIdentifier = @"settingCell";
+    SettingCell *settingCell = (SettingCell *)[tableView dequeueReusableCellWithIdentifier:settingCellIdentifier];
+    if (settingCell == nil)
+    {
+        
+        NSArray *nib = [[NSBundle mainBundle] loadNibNamed:@"SettingCell" owner:self options:nil];
+		settingCell = [nib objectAtIndex:0];
+    }
+    // Configure the cell...
+    settingCell.optionLabel.text=[optionList objectAtIndex:indexPath.row];
+    return settingCell;
+}
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    switch (indexPath.row) {
+        case 0:
+            [self performSegueWithIdentifier:@"profileSettingSegue" sender:[tableView cellForRowAtIndexPath:indexPath]];
+            break;
+            
+        case 1:
+            [self performSegueWithIdentifier:@"colorAndFontSettingSegue" sender:[tableView cellForRowAtIndexPath:indexPath]];
+            break;
+            
+        case 2:
+            [self performSegueWithIdentifier:@"syncingSettingSegue" sender:[tableView cellForRowAtIndexPath:indexPath]];
+            break;
+            
+        case 3:
+            [self performSegueWithIdentifier:@"aboutSegue" sender:[tableView cellForRowAtIndexPath:indexPath]];
+            break;
+            
+        default:
+            // there should not be invalid selection, we show only as many cells
+            break;
+    }
+    
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+}
+
+-(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
+    
+    
+    if([segue.identifier isEqualToString:@"profileSettingSegue"])
+        
+    {
+//        NSIndexPath *path = [self.tableView indexPathForSelectedRow];
+//        ContactViewController *destinationViewController = segue.destinationViewController;
+//        NSString *number = [contactPhoneNumbers objectAtIndex:path.row];
+//        destinationViewController.passedName=[contactNamesDictionary valueForKey:number];
+//        destinationViewController.passedPhoneNumber=number;
+//        destinationViewController.hasWhatsapp=[contactHasWhatsappDictionary valueForKey:number];
+//        destinationViewController.hasViber=[contactHasViberDictionary valueForKey:number];
+//        
+        
+    }
+    
 }
 
 - (void)didReceiveMemoryWarning
@@ -53,8 +147,6 @@ ABAddressBookRef addressBook ;
     svc.navigationController.navigationBarHidden=true;
     [self presentViewController:loginNavigationController animated:YES completion:nil];
     
-    //To dismiss
-    //[loginNavigationController dissmissViewController]
 }
 
 -(void)getCalendarData{

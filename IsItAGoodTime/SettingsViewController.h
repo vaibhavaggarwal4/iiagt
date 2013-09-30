@@ -9,5 +9,6 @@
 #import <UIKit/UIKit.h>
 
 @interface SettingsViewController : UIViewController
+-(void)dismissLoginViewController:(UIViewController *)loginViewController;
 
 @end

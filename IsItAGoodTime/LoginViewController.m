@@ -7,13 +7,14 @@
 //
 
 #import "LoginViewController.h"
+#import "SettingsViewController.h"
 
 @interface LoginViewController ()
 
 @end
 
 @implementation LoginViewController
-
+SettingsViewController *settingsMessenger;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -101,10 +102,14 @@
     self.infoView.hidden=false;
 }
 - (IBAction)loginButton:(id)sender {
+    settingsMessenger = [[SettingsViewController alloc]init];
+    [settingsMessenger dismissLoginViewController:self];
+//[self dismissViewControllerAnimated:YES completion:nil];
+  //  [self.presentingViewController.presentingViewController.tabBarController setSelectedIndex:1];
+    
 }
 
 - (IBAction)infoViewCloseButton:(id)sender {
-    
     self.infoView.hidden=true;
 }
 @end
