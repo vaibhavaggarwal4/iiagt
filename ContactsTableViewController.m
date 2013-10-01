@@ -18,7 +18,9 @@
 @property(strong,nonatomic)NSMutableDictionary *contactNamesDictionary;
 @property(strong,nonatomic)NSMutableDictionary *contactHasViberDictionary;
 @property(strong,nonatomic)NSMutableDictionary *contactHasWhatsappDictionary;
-
+@property(strong,nonatomic)UISwitch *toggleSwitch;
+@property(strong,nonatomic)UILabel *availabilityLabel;
+@property(strong,nonatomic)NSDictionary *selfDataDictionary;
 
 @end
 
@@ -30,6 +32,10 @@
 @synthesize contactsLocalTimeDictionary;
 @synthesize contactHasViberDictionary;
 @synthesize contactHasWhatsappDictionary;
+@synthesize toggleSwitch;
+@synthesize availabilityLabel;
+@synthesize selfDataDictionary;
+bool available=true;
 UIApplication *networkIndicator;
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -50,7 +56,7 @@ UIApplication *networkIndicator;
     // self.clearsSelectionOnViewWillAppear = NO;
  
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+     self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
 
 - (void)didReceiveMemoryWarning
@@ -68,7 +74,23 @@ UIApplication *networkIndicator;
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
 
-    return 40;
+    return 50;
+}
+-(UIView *) tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
+    UIView *headerView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 50)];
+    headerView.backgroundColor=[UIColor grayColor];
+    availabilityLabel=[[UILabel alloc]initWithFrame:CGRectMake(40, 14, 220, 20)];
+    [availabilityLabel setTextAlignment:NSTextAlignmentCenter];
+    if(available){
+        availabilityLabel.text=@"Available";
+    }
+    else{
+        availabilityLabel.text=@"Busy";
+    }
+    [headerView addSubview:availabilityLabel];
+    toggleSwitch=[[UISwitch alloc]initWithFrame:CGRectMake(260, 10, 40, 15)];
+    [headerView addSubview:toggleSwitch];
+    return headerView;
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     return 80;
@@ -170,7 +192,7 @@ UIApplication *networkIndicator;
     dispatch_queue_t loadDataQueue = dispatch_queue_create("dataLoadingQueue", NULL);
     [self.refreshControl beginRefreshing];
     dispatch_async(loadDataQueue, ^{
-        
+        [self loadSelfStatus];
         [self loadData];
         
         dispatch_sync(dispatch_get_main_queue(), ^{
@@ -181,6 +203,43 @@ UIApplication *networkIndicator;
         
     });
 }
+-(void)loadSelfStatus{
+    NSMutableDictionary *params = [[NSMutableDictionary alloc]init];
+    [params setValue:@"f8b02e92e32f62d878e3289e04044057" forKey:@"unique_hash"];
+    [params setValue:@"7019361484" forKey:@"phone_number"];
+    
+    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:[NSURL URLWithString:@"http://localhost:8080/"]];
+    NSMutableURLRequest *request = [httpClient requestWithMethod:@"GET"
+                                                            path:@"http://localhost:8080/user/self"
+                                                      parameters:params];
+    AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request
+                                         
+                                            success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+                                                selfDataDictionary =(NSDictionary *) JSON;
+                        NSNumber *busyResponse=[[[selfDataDictionary valueForKey:@"details"] valueForKey:@"user_set_busy"] objectAtIndex:0 ];
+                                                if( [busyResponse intValue]==1){
+                                                    available=NO;
+                                                }
+                                                else{
+                                                    available=YES;
+                                                }
+                                                    }
+                                        
+                                failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
+                                                    // Message for the geeks
+                                                    UIAlertView *failure = [[UIAlertView alloc] initWithTitle:@"Error Retrieving Profile Data"
+                                                    message:[NSString stringWithFormat:@"%@",error]
+                                                    delegate:nil
+                                                    cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                                                    [failure show];
+                    }];
+    
+    [operation start];
+    
+}
+
+
+
 -(void)loadData {
     
     NSMutableDictionary *params = [[NSMutableDictionary alloc]init];

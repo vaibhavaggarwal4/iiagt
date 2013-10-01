@@ -15,6 +15,9 @@
 
 @implementation LoginViewController
 SettingsViewController *settingsMessenger;
+@synthesize nameField;
+@synthesize numberField;
+
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -96,12 +99,23 @@ SettingsViewController *settingsMessenger;
 //    
 //    loginView.layer.shadowPath = [[UIBezierPath bezierPathWithRect:loginView.layer.bounds] CGPath];
 //}
-
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    if(nameField.isEditing){
+        [nameField resignFirstResponder];
+    }
+    if(numberField.isEditing){
+        [numberField resignFirstResponder];
+    }
+}
 - (IBAction)infoViewButton:(id)sender {
     
     self.infoView.hidden=false;
 }
 - (IBAction)loginButton:(id)sender {
+    
+    NSLog(@"%@",nameField.text);
+    NSLog(@"%@",numberField.text);
     settingsMessenger = [[SettingsViewController alloc]init];
     [settingsMessenger dismissLoginViewController:self];
 //[self dismissViewControllerAnimated:YES completion:nil];
