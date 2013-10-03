@@ -18,10 +18,11 @@
 @property(strong,nonatomic)NSMutableDictionary *contactNamesDictionary;
 @property(strong,nonatomic)NSMutableDictionary *contactHasViberDictionary;
 @property(strong,nonatomic)NSMutableDictionary *contactHasWhatsappDictionary;
-@property(strong,nonatomic)UISwitch *toggleSwitch;
 @property(strong,nonatomic)UILabel *availabilityLabel;
+@property(strong,nonatomic)NSString *availabilityStatus;
 @property(strong,nonatomic)NSDictionary *selfDataDictionary;
-
+@property(strong,nonatomic)NSArray *controlItems;
+@property(strong,nonatomic)UISegmentedControl *controlSegment;
 @end
 
 @implementation ContactsTableViewController
@@ -32,9 +33,11 @@
 @synthesize contactsLocalTimeDictionary;
 @synthesize contactHasViberDictionary;
 @synthesize contactHasWhatsappDictionary;
-@synthesize toggleSwitch;
 @synthesize availabilityLabel;
+@synthesize availabilityStatus;
 @synthesize selfDataDictionary;
+@synthesize controlItems;
+@synthesize controlSegment;
 bool available=true;
 UIApplication *networkIndicator;
 - (id)initWithStyle:(UITableViewStyle)style
@@ -49,15 +52,18 @@ UIApplication *networkIndicator;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    
     networkIndicator= [UIApplication sharedApplication];
     [self.refreshControl addTarget:self action:@selector(loadDataInBackgroundThread) forControlEvents:UIControlEventValueChanged];
+    
+    
+    controlItems = [NSArray arrayWithObjects: @"Available", @"Busy", @"Driving", nil];
+    controlSegment = [[UISegmentedControl alloc]initWithItems:controlItems];
+    [controlSegment addTarget:self action:@selector(updateAvailabilityAndControl :) forControlEvents:UIControlEventValueChanged];
+    
     [self loadDataInBackgroundThread];
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
- 
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-     self.navigationItem.rightBarButtonItem = self.editButtonItem;
-}
+    }
 
 - (void)didReceiveMemoryWarning
 {
@@ -65,46 +71,55 @@ UIApplication *networkIndicator;
     // Dispose of any resources that can be recreated.
 }
 
-#pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    // Return the number of sections.
     return 1;
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
 
-    return 50;
+    return 80;
 }
 -(UIView *) tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-    UIView *headerView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 50)];
-    headerView.backgroundColor=[UIColor grayColor];
-    availabilityLabel=[[UILabel alloc]initWithFrame:CGRectMake(40, 14, 220, 20)];
+    UIView *headerView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 100)];
+    //headerView.backgroundColor=[UIColor grayColor];
+    availabilityLabel=[[UILabel alloc]initWithFrame:CGRectMake(60, 14, 200, 20)];
+    //availabilityLabel.center=headerView.center;
     [availabilityLabel setTextAlignment:NSTextAlignmentCenter];
-    if(available){
-        availabilityLabel.text=@"Available";
+    
+    
+    
+    controlSegment.frame = CGRectMake(60, 40, 200, 20);
+    
+    if([availabilityStatus isEqualToString:@"Available"]){
+        controlSegment.selectedSegmentIndex = 0;
+
+    }else if([availabilityStatus isEqualToString:@"Busy"])
+    {
+        controlSegment.selectedSegmentIndex = 1;
+
+    }else{
+        controlSegment.selectedSegmentIndex = 2;
+
     }
-    else{
-        availabilityLabel.text=@"Busy";
-    }
+    [headerView addSubview:controlSegment];
+    availabilityLabel.text=availabilityStatus;
     [headerView addSubview:availabilityLabel];
-    toggleSwitch=[[UISwitch alloc]initWithFrame:CGRectMake(260, 10, 40, 15)];
-    [headerView addSubview:toggleSwitch];
+
     return headerView;
 }
+
+
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     return 80;
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    // Return the number of rows in the section.
     return [[serverResponse valueForKey:@"contacts"] count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    //static NSString *CellIdentifier = @"contactCell";
-    //UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     static NSString *contactCellIdentifier = @"contactCell";
     ContactsCell *contactCell = (ContactsCell *)[tableView dequeueReusableCellWithIdentifier:contactCellIdentifier];
     if (contactCell == nil)
@@ -121,11 +136,14 @@ UIApplication *networkIndicator;
     
     return contactCell;
 }
+
+
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [self performSegueWithIdentifier:@"contactSegue" sender:[self.tableView cellForRowAtIndexPath:indexPath]];
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
+
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
     
@@ -184,7 +202,6 @@ UIApplication *networkIndicator;
 }
 */
 
-
 -(void)loadDataInBackgroundThread{
     
     networkIndicator.networkActivityIndicatorVisible=YES;
@@ -203,6 +220,8 @@ UIApplication *networkIndicator;
         
     });
 }
+
+
 -(void)loadSelfStatus{
     NSMutableDictionary *params = [[NSMutableDictionary alloc]init];
     [params setValue:@"f8b02e92e32f62d878e3289e04044057" forKey:@"unique_hash"];
@@ -216,13 +235,9 @@ UIApplication *networkIndicator;
                                          
                                             success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
                                                 selfDataDictionary =(NSDictionary *) JSON;
-                        NSNumber *busyResponse=[[[selfDataDictionary valueForKey:@"details"] valueForKey:@"user_set_busy"] objectAtIndex:0 ];
-                                                if( [busyResponse intValue]==1){
-                                                    available=NO;
-                                                }
-                                                else{
-                                                    available=YES;
-                                                }
+                                                availabilityStatus=[[[selfDataDictionary valueForKey:@"details"] valueForKey:@"user_set_busy"] objectAtIndex:0];
+
+                                                [self.tableView reloadData];
                                                     }
                                         
                                 failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
@@ -237,7 +252,6 @@ UIApplication *networkIndicator;
     [operation start];
     
 }
-
 
 
 -(void)loadData {
@@ -256,13 +270,13 @@ UIApplication *networkIndicator;
                         //self.response = (NSDictionary *) JSON;
                         serverResponse =(NSDictionary *) JSON;
                         [self arrangeDataToDisplay:serverResponse];
+                       // [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationBottom];
                         [self.tableView reloadData];
                     }
                                           
                     failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
                                                                                              
                                                                                              
-                                                                                             // Message for the geeks
                         UIAlertView *failure = [[UIAlertView alloc] initWithTitle:@"Error Retrieving Profile Data"
                                                                                     message:[NSString stringWithFormat:@"%@",error]
                                                                                     delegate:nil
@@ -274,6 +288,44 @@ UIApplication *networkIndicator;
 
 }
 
+-(IBAction)updateAvailabilityAndControl  :(id)sender{
+    //NSLog(@"Hey there %@",[controlSegment titleForSegmentAtIndex:[controlSegment selectedSegmentIndex]]);
+    [self updateAvailability:[controlSegment titleForSegmentAtIndex:[controlSegment selectedSegmentIndex]]];
+
+}
+
+-(void)updateAvailability:(NSString *) available{
+    NSMutableDictionary *params = [[NSMutableDictionary alloc]init];
+    [params setValue:@"f8b02e92e32f62d878e3289e04044057" forKey:@"unique_hash"];
+    [params setValue:@"7019361484" forKey:@"phone_number"];
+    [params setValue:available forKey:@"availibility"];
+    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:[NSURL URLWithString:@"http://localhost:8080/"]];
+    NSMutableURLRequest *request = [httpClient requestWithMethod:@"GET"
+                                                            path:@"http://localhost:8080/user/self/available"
+                                                      parameters:params];
+AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request
+
+        success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+            // parse response if status true, only then update
+            [self loadSelfStatus];
+                                    // response will tell status change was successful or not
+                                    
+                                }
+
+                                failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
+                                    // Message for the geeks
+                                    UIAlertView *failure = [[UIAlertView alloc] initWithTitle:@"Could not change status"
+                                                                                      message:[NSString stringWithFormat:@"%@",error]
+                                                                                     delegate:nil
+                                                                            cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                                    [failure show];
+                                }];
+
+[operation start];
+
+    
+    
+}
 -(void)arrangeDataToDisplay:(NSDictionary *)response{
    // NSLog(@"%@",response);
     NSLog(@"%lu",(unsigned long)[[response valueForKey:@"contacts"] count]);
