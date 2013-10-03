@@ -61,7 +61,8 @@ UIApplication *networkIndicator;
     controlItems = [NSArray arrayWithObjects: @"Available", @"Busy", @"Driving", nil];
     controlSegment = [[UISegmentedControl alloc]initWithItems:controlItems];
     [controlSegment addTarget:self action:@selector(updateAvailabilityAndControl :) forControlEvents:UIControlEventValueChanged];
-    
+    controlSegment.frame = CGRectMake(60, 40, 200, 20);
+    self.navigationItem.titleView=controlSegment;
     [self loadDataInBackgroundThread];
     }
 
@@ -78,18 +79,18 @@ UIApplication *networkIndicator;
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
 
-    return 80;
+    return 40;
 }
 -(UIView *) tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
     UIView *headerView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 100)];
-    //headerView.backgroundColor=[UIColor grayColor];
-    availabilityLabel=[[UILabel alloc]initWithFrame:CGRectMake(60, 14, 200, 20)];
+    headerView.backgroundColor=[UIColor grayColor];
+    availabilityLabel=[[UILabel alloc]initWithFrame:CGRectMake(60, 10, 200, 20)];
     //availabilityLabel.center=headerView.center;
     [availabilityLabel setTextAlignment:NSTextAlignmentCenter];
     
     
     
-    controlSegment.frame = CGRectMake(60, 40, 200, 20);
+    //controlSegment.frame = CGRectMake(60, 40, 200, 20);
     
     if([availabilityStatus isEqualToString:@"Available"]){
         controlSegment.selectedSegmentIndex = 0;
@@ -102,7 +103,7 @@ UIApplication *networkIndicator;
         controlSegment.selectedSegmentIndex = 2;
 
     }
-    [headerView addSubview:controlSegment];
+   // [headerView addSubview:controlSegment];
     availabilityLabel.text=availabilityStatus;
     [headerView addSubview:availabilityLabel];
 
@@ -236,7 +237,7 @@ UIApplication *networkIndicator;
                                             success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
                                                 selfDataDictionary =(NSDictionary *) JSON;
                                                 availabilityStatus=[[[selfDataDictionary valueForKey:@"details"] valueForKey:@"user_set_busy"] objectAtIndex:0];
-
+                                                self.navigationItem.title=availabilityStatus;
                                                 [self.tableView reloadData];
                                                     }
                                         
@@ -270,7 +271,7 @@ UIApplication *networkIndicator;
                         //self.response = (NSDictionary *) JSON;
                         serverResponse =(NSDictionary *) JSON;
                         [self arrangeDataToDisplay:serverResponse];
-                       // [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationBottom];
+                        //[self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationBottom];
                         [self.tableView reloadData];
                     }
                                           
@@ -285,7 +286,6 @@ UIApplication *networkIndicator;
             }];
 
         [operation start];
-
 }
 
 -(IBAction)updateAvailabilityAndControl  :(id)sender{
