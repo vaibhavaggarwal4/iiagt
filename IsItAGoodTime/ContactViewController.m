@@ -24,7 +24,7 @@
 @synthesize whatsappButtonOutlet;
 @synthesize viberButtonOutlet;
 MessageControllerViewController *messenger;
-NSString *trueVale = @"1";
+NSString *trueVal = @"1";
 - (void)viewDidLoad
 {
     [super viewDidLoad];

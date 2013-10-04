@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		6D2739E817F28F2800D88904 /* EventKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D2739E617F28F2800D88904 /* EventKit.framework */; };
 		6D2739E917F28F2800D88904 /* EventKitUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D2739E717F28F2800D88904 /* EventKitUI.framework */; };
+		6D71E1E217FE569C00D263A4 /* ProfileSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D71E1E117FE569C00D263A4 /* ProfileSettingsViewController.m */; };
 		6D83244117F7D38300369FD4 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D83244017F7D38300369FD4 /* LoginViewController.m */; };
 		6D83244317F8F60700369FD4 /* SettingCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6D83244217F8F60700369FD4 /* SettingCell.xib */; };
 		6D83244617F8F64D00369FD4 /* SettingCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D83244517F8F64D00369FD4 /* SettingCell.m */; };
@@ -49,6 +50,8 @@
 /* Begin PBXFileReference section */
 		6D2739E617F28F2800D88904 /* EventKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EventKit.framework; path = System/Library/Frameworks/EventKit.framework; sourceTree = SDKROOT; };
 		6D2739E717F28F2800D88904 /* EventKitUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EventKitUI.framework; path = System/Library/Frameworks/EventKitUI.framework; sourceTree = SDKROOT; };
+		6D71E1E017FE569C00D263A4 /* ProfileSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProfileSettingsViewController.h; sourceTree = "<group>"; };
+		6D71E1E117FE569C00D263A4 /* ProfileSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProfileSettingsViewController.m; sourceTree = "<group>"; };
 		6D83243F17F7D38300369FD4 /* LoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginViewController.h; sourceTree = "<group>"; };
 		6D83244017F7D38300369FD4 /* LoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginViewController.m; sourceTree = "<group>"; };
 		6D83244217F8F60700369FD4 /* SettingCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SettingCell.xib; sourceTree = "<group>"; };
@@ -134,6 +137,8 @@
 				6D83244417F8F64D00369FD4 /* SettingCell.h */,
 				6D83244517F8F64D00369FD4 /* SettingCell.m */,
 				6D83244217F8F60700369FD4 /* SettingCell.xib */,
+				6D71E1E017FE569C00D263A4 /* ProfileSettingsViewController.h */,
+				6D71E1E117FE569C00D263A4 /* ProfileSettingsViewController.m */,
 			);
 			name = Settings;
 			sourceTree = "<group>";
@@ -318,6 +323,7 @@
 				6DA9037617EBF59200728787 /* ContactsCell.m in Sources */,
 				6DA9035017EBC69600728787 /* ContactsTableViewController.m in Sources */,
 				6DA9036D17EBC74300728787 /* UIImageView+AFNetworking.m in Sources */,
+				6D71E1E217FE569C00D263A4 /* ProfileSettingsViewController.m in Sources */,
 				6DA9036B17EBC74300728787 /* AFURLConnectionOperation.m in Sources */,
 				6DA9036917EBC74300728787 /* AFNetworkActivityIndicatorManager.m in Sources */,
 				6D9F53FD17E94AED006B993F /* ContactViewController.m in Sources */,

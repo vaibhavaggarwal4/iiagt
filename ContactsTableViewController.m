@@ -298,12 +298,16 @@ UIApplication *networkIndicator;
     NSMutableDictionary *params = [[NSMutableDictionary alloc]init];
     [params setValue:@"f8b02e92e32f62d878e3289e04044057" forKey:@"unique_hash"];
     [params setValue:@"7019361484" forKey:@"phone_number"];
-    [params setValue:available forKey:@"availibility"];
-    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:[NSURL URLWithString:@"http://localhost:8080/"]];
-    NSMutableURLRequest *request = [httpClient requestWithMethod:@"GET"
+    [params setValue:available forKey:@"availability"];
+    
+    
+       AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:[NSURL URLWithString:@"http://localhost:8080/"]];
+    [httpClient setParameterEncoding:AFFormURLParameterEncoding];
+    NSMutableURLRequest *request = [httpClient requestWithMethod:@"POST"
                                                             path:@"http://localhost:8080/user/self/available"
                                                       parameters:params];
-AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request
+
+    AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request
 
         success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
             // parse response if status true, only then update
