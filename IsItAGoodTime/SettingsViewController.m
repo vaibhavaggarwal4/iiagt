@@ -12,6 +12,7 @@
 #import "LoginViewController.h"
 #import "ContactsCell.h"
 #import "SettingCell.h"
+#import "AppDelegate.h"
 @interface SettingsViewController ()
 @property(strong,nonatomic)NSMutableArray *userContacts;
 @property(strong,nonatomic)NSMutableArray *userContactNames;
@@ -23,9 +24,11 @@
 bool loggedIn= false;
 ABAddressBookRef addressBook ;
 @synthesize optionList;
+@synthesize settingsTable;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    prefs = [NSUserDefaults standardUserDefaults];
 	// Do any additional setup after loading the view, typically from a nib.
     optionList =[[NSArray alloc]initWithObjects:@"Profile",@"Font and Colors",@"Syncing preferences",@"About", nil];
    // [self getCalendarData];
@@ -36,12 +39,22 @@ ABAddressBookRef addressBook ;
     ABAddressBookRegisterExternalChangeCallback(addressBook,addressBookChanged,(__bridge void *)(self));
     [self determineAccessToAddressBookAndHandle];
     
+    
 }
-
+-(void)viewWillAppear:(BOOL)animated{
+    [settingsTable reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationAutomatic];
+}
 -(void)viewDidAppear:(BOOL)animated{
     
+    if([prefs valueForKey:@"name"]){
+    
+    }
+    else{
+        [self checkIfNewUserAndPresentLoginView];
+
+    }
+    
     if(!loggedIn){
-    [self checkIfNewUserAndPresentLoginView];
         loggedIn=true;
     }
 }

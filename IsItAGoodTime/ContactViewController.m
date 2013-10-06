@@ -72,8 +72,11 @@ NSString *trueVal = @"1";
 
 
 - (IBAction)whatsAppButton:(id)sender {
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://maps.apple.com/?q=cupertino"]];
 }
 
 - (IBAction)viberButton:(id)sender {
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://www.viber.com//"]];
+
 }
 @end

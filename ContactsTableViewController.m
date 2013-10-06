@@ -11,6 +11,7 @@
 #import "AppDelegate.h"
 #import "ContactsCell.h"
 #import "ContactViewController.h"
+#import "AppDelegate.h"
 @interface ContactsTableViewController ()
 @property(strong,nonatomic)NSMutableArray *contactPhoneNumbers;
 @property(strong,nonatomic)NSMutableDictionary *contactsLastSyncedDictionary;
@@ -18,11 +19,13 @@
 @property(strong,nonatomic)NSMutableDictionary *contactNamesDictionary;
 @property(strong,nonatomic)NSMutableDictionary *contactHasViberDictionary;
 @property(strong,nonatomic)NSMutableDictionary *contactHasWhatsappDictionary;
+@property(strong,nonatomic)NSMutableDictionary *contactAvailabilityDictionary;
 @property(strong,nonatomic)UILabel *availabilityLabel;
 @property(strong,nonatomic)NSString *availabilityStatus;
 @property(strong,nonatomic)NSDictionary *selfDataDictionary;
 @property(strong,nonatomic)NSArray *controlItems;
 @property(strong,nonatomic)UISegmentedControl *controlSegment;
+@property(strong,nonatomic)NSMutableDictionary *availabilityResponse;
 @end
 
 @implementation ContactsTableViewController
@@ -38,6 +41,8 @@
 @synthesize selfDataDictionary;
 @synthesize controlItems;
 @synthesize controlSegment;
+@synthesize contactAvailabilityDictionary;
+@synthesize availabilityResponse;
 bool available=true;
 UIApplication *networkIndicator;
 - (id)initWithStyle:(UITableViewStyle)style
@@ -53,6 +58,13 @@ UIApplication *networkIndicator;
 {
     [super viewDidLoad];
     
+    contactPhoneNumbers=[[NSMutableArray alloc]init];
+    contactNamesDictionary = [[NSMutableDictionary alloc]init];
+    contactsLocalTimeDictionary=[[NSMutableDictionary alloc]init];
+    contactsLastSyncedDictionary=[[NSMutableDictionary alloc]init];
+    contactHasViberDictionary = [[NSMutableDictionary alloc]init];
+    contactHasWhatsappDictionary = [[NSMutableDictionary alloc]init];
+    contactAvailabilityDictionary=[[NSMutableDictionary alloc]init];
     
     networkIndicator= [UIApplication sharedApplication];
     [self.refreshControl addTarget:self action:@selector(loadDataInBackgroundThread) forControlEvents:UIControlEventValueChanged];
@@ -83,7 +95,8 @@ UIApplication *networkIndicator;
 }
 -(UIView *) tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
     UIView *headerView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 100)];
-    headerView.backgroundColor=[UIColor grayColor];
+    headerView.backgroundColor=[UIColor greenColor];
+    headerView.alpha=0.7f;
     availabilityLabel=[[UILabel alloc]initWithFrame:CGRectMake(60, 10, 200, 20)];
     //availabilityLabel.center=headerView.center;
     [availabilityLabel setTextAlignment:NSTextAlignmentCenter];
@@ -134,6 +147,10 @@ UIApplication *networkIndicator;
     contactCell.nameLabel.text = [contactNamesDictionary valueForKey:number];
     contactCell.timeZoneLabel.text=[contactsLocalTimeDictionary valueForKey:number];
     contactCell.lastSyncedLabel.text=[contactsLastSyncedDictionary valueForKey:number];
+    if(![[contactAvailabilityDictionary valueForKey:number] isEqualToString:@"Available"]){
+        contactCell.availabilityLabel.textColor=[UIColor redColor];
+    }
+    contactCell.availabilityLabel.text=[contactAvailabilityDictionary valueForKey:number];
     
     return contactCell;
 }
@@ -237,8 +254,8 @@ UIApplication *networkIndicator;
                                             success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
                                                 selfDataDictionary =(NSDictionary *) JSON;
                                                 availabilityStatus=[[[selfDataDictionary valueForKey:@"details"] valueForKey:@"user_set_busy"] objectAtIndex:0];
-                                                self.navigationItem.title=availabilityStatus;
-                                                [self.tableView reloadData];
+                                                //self.navigationItem.title=availabilityStatus;
+                                                //[self.tableView reloadData];
                                                     }
                                         
                                 failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
@@ -271,7 +288,6 @@ UIApplication *networkIndicator;
                         //self.response = (NSDictionary *) JSON;
                         serverResponse =(NSDictionary *) JSON;
                         [self arrangeDataToDisplay:serverResponse];
-                        //[self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationBottom];
                         [self.tableView reloadData];
                     }
                                           
@@ -298,23 +314,37 @@ UIApplication *networkIndicator;
     NSMutableDictionary *params = [[NSMutableDictionary alloc]init];
     [params setValue:@"f8b02e92e32f62d878e3289e04044057" forKey:@"unique_hash"];
     [params setValue:@"7019361484" forKey:@"phone_number"];
-    [params setValue:available forKey:@"availability"];
+    [params setValue:@"user_set_busy" forKey:@"target"];
+    [params setValue:available forKey:@"value"];
+
     
     
        AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:[NSURL URLWithString:@"http://localhost:8080/"]];
     [httpClient setParameterEncoding:AFFormURLParameterEncoding];
     NSMutableURLRequest *request = [httpClient requestWithMethod:@"POST"
-                                                            path:@"http://localhost:8080/user/self/available"
+                                                            path:@"http://localhost:8080/user/changeStatus"
                                                       parameters:params];
 
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request
 
         success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
             // parse response if status true, only then update
-            [self loadSelfStatus];
-                                    // response will tell status change was successful or not
-                                    
-                                }
+            if([[JSON valueForKey:@"status"] isEqualToString:@"true" ]){
+                availabilityStatus=available;
+                [self.tableView reloadData];
+
+            }
+            else{
+                UIAlertView *failure = [[UIAlertView alloc] initWithTitle:@"Could not change status"
+                                                                  message:[NSString stringWithFormat:@"Try again later"]
+                                                                 delegate:nil
+                                                        cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                [failure show];
+
+                
+            }
+            
+                }
 
                                 failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
                                     // Message for the geeks
@@ -332,13 +362,8 @@ UIApplication *networkIndicator;
 }
 -(void)arrangeDataToDisplay:(NSDictionary *)response{
    // NSLog(@"%@",response);
-    NSLog(@"%lu",(unsigned long)[[response valueForKey:@"contacts"] count]);
-    contactPhoneNumbers=[[NSMutableArray alloc]init];
-    contactNamesDictionary = [[NSMutableDictionary alloc]init];
-    contactsLocalTimeDictionary=[[NSMutableDictionary alloc]init];
-    contactsLastSyncedDictionary=[[NSMutableDictionary alloc]init];
-    contactHasViberDictionary = [[NSMutableDictionary alloc]init];
-    contactHasWhatsappDictionary = [[NSMutableDictionary alloc]init];
+    //NSLog(@"%lu",(unsigned long)[[response valueForKey:@"contacts"] count]);
+    
     NSDate *now = [NSDate date];
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
     [formatter setDateStyle:NSDateFormatterShortStyle];
@@ -357,6 +382,7 @@ UIApplication *networkIndicator;
         [self.contactsLastSyncedDictionary setObject:[self getDateFromTimeStamp:[contact valueForKeyPath:@"last_synced"]] forKey:number];
         [self.contactHasViberDictionary setObject:[contact valueForKeyPath:@"has_viber"] forKey:number];
         [self.contactHasWhatsappDictionary setObject:[contact valueForKeyPath:@"has_whatsapp"] forKey:number];
+        [self.contactAvailabilityDictionary setObject:[contact valueForKeyPath:@"user_set_busy"] forKey:number];
         
     }
     

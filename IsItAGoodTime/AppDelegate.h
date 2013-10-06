@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #define BASEURL  @"http://localhost:8080/"
-
+NSUserDefaults *prefs;
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 @property (strong, nonatomic) UIWindow *window;
 

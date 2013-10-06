@@ -10,5 +10,6 @@
 
 @interface SettingsViewController : UIViewController
 -(void)dismissLoginViewController:(UIViewController *)loginViewController;
+@property (weak, nonatomic) IBOutlet UITableView *settingsTable;
 
 @end

@@ -14,4 +14,5 @@
 
 @property (weak, nonatomic) IBOutlet UISwitch *whatsappSwitch;
 @property (weak, nonatomic) IBOutlet UILabel *whatsappLabel;
+
 @end

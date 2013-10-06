@@ -45,6 +45,7 @@
 		6DA9036D17EBC74300728787 /* UIImageView+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DA9036417EBC74300728787 /* UIImageView+AFNetworking.m */; };
 		6DA9037617EBF59200728787 /* ContactsCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DA9037517EBF59200728787 /* ContactsCell.m */; };
 		6DA9037817EBF5B500728787 /* ContactsCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6DA9037717EBF5B500728787 /* ContactsCell.xib */; };
+		6DADA76518012D03001CAD03 /* SyncingPreferencesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DADA76418012D03001CAD03 /* SyncingPreferencesViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -108,6 +109,8 @@
 		6DA9037417EBF59200728787 /* ContactsCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContactsCell.h; path = ../ContactsCell.h; sourceTree = "<group>"; };
 		6DA9037517EBF59200728787 /* ContactsCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ContactsCell.m; path = ../ContactsCell.m; sourceTree = "<group>"; };
 		6DA9037717EBF5B500728787 /* ContactsCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = ContactsCell.xib; path = ../ContactsCell.xib; sourceTree = "<group>"; };
+		6DADA76318012D03001CAD03 /* SyncingPreferencesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SyncingPreferencesViewController.h; sourceTree = "<group>"; };
+		6DADA76418012D03001CAD03 /* SyncingPreferencesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SyncingPreferencesViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -134,6 +137,8 @@
 			children = (
 				6D9F540217E94AED006B993F /* SettingsViewController.h */,
 				6D9F540317E94AED006B993F /* SettingsViewController.m */,
+				6DADA76318012D03001CAD03 /* SyncingPreferencesViewController.h */,
+				6DADA76418012D03001CAD03 /* SyncingPreferencesViewController.m */,
 				6D83244417F8F64D00369FD4 /* SettingCell.h */,
 				6D83244517F8F64D00369FD4 /* SettingCell.m */,
 				6D83244217F8F60700369FD4 /* SettingCell.xib */,
@@ -332,6 +337,7 @@
 				6D83244117F7D38300369FD4 /* LoginViewController.m in Sources */,
 				6D9F540417E94AED006B993F /* SettingsViewController.m in Sources */,
 				6DA9036A17EBC74300728787 /* AFPropertyListRequestOperation.m in Sources */,
+				6DADA76518012D03001CAD03 /* SyncingPreferencesViewController.m in Sources */,
 				6DA9036517EBC74300728787 /* AFHTTPClient.m in Sources */,
 				6DA9036617EBC74300728787 /* AFHTTPRequestOperation.m in Sources */,
 			);

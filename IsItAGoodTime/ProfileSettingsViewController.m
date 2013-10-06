@@ -7,7 +7,7 @@
 //
 
 #import "ProfileSettingsViewController.h"
-
+#import "AppDelegate.h"
 @interface ProfileSettingsViewController ()
 
 @end
@@ -44,12 +44,28 @@ NSNumber *off;
     [viberSwitch addTarget:self action:@selector(updateViber:) forControlEvents:UIControlEventValueChanged];
     [whatsappSwitch addTarget:self action:@selector(updateWhatsapp:) forControlEvents:UIControlEventValueChanged];
     
-    if(viberSwitch.on){
+    
+    
+    if([[prefs valueForKey:@"viber"] isEqualToString:@"Yes" ]){
+        viberSwitch.on=YES;
         viberLabel.text=@"Yes";
     }
-    if(whatsappSwitch.on)
+    else{
+        viberSwitch.on=NO;
+        viberLabel.text=@"No";
+
+    }
+    
+    
+    if([[prefs valueForKey:@"whatsapp"] isEqualToString:@"Yes"])
     {
+        whatsappSwitch.on=YES;
         whatsappLabel.text=@"Yes";
+    }
+    else{
+        whatsappSwitch.on=NO;
+        whatsappLabel.text=@"No";
+
     }
     
 }
@@ -63,14 +79,23 @@ NSNumber *off;
     
     
     if(viberSwitch.on){
-        [self updateStatus:@"viber" withValue:on];
+        [self updateStatus:@"has_viber" withValue:on];
+        
+        // do all this only if above was successfull
+        
+        [prefs setObject:@"Yes" forKey:@"viber"];
+        [prefs synchronize];
+
         viberLabel.text=@"Yes";
 
     }
     else{
-        [self updateStatus:@"viber" withValue:off];
+        
+        [self updateStatus:@"has_viber" withValue:off];
+        [prefs setObject:@"No" forKey:@"viber"];
+        [prefs synchronize];
         viberLabel.text=@"No";
-
+  
 
     }
 }
@@ -78,30 +103,36 @@ NSNumber *off;
 -(IBAction)updateWhatsapp:(id)sender{
     if(whatsappSwitch.on)
     {
-        [self updateStatus:@"whatsapp" withValue:on];
+        [self updateStatus:@"has_whatsapp" withValue:on];
+        [prefs setObject:@"Yes" forKey:@"whatsapp"];
+        [prefs synchronize];
+
         whatsappLabel.text=@"Yes";
     }
     else{
         
-        [self updateStatus:@"whatsapp" withValue:off];
+        [self updateStatus:@"has_whatsapp" withValue:off];
+        [prefs setObject:@"No" forKey:@"whatsapp"];
+        [prefs synchronize];
+
         whatsappLabel.text=@"No";
     }
 }
 
--(void)updateStatus:(NSString *)appName withValue:(NSNumber *)value{
+-(void)updateStatus:(NSString *)target withValue:(NSNumber *)value{
    
-  
+
     
      NSMutableDictionary *params = [[NSMutableDictionary alloc]init];
     [params setValue:@"f8b02e92e32f62d878e3289e04044057" forKey:@"unique_hash"];
     [params setValue:@"7019361484" forKey:@"phone_number"];
-    [params setValue:value forKey:appName];
+    [params setValue:target forKey:@"target"];
+    [params setValue:value forKey:@"value"];
     
-    NSString *path =[NSString stringWithFormat:@"http://localhost:8080/user/self/%@",appName];
     AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:[NSURL URLWithString:@"http://localhost:8080/"]];
     [httpClient setParameterEncoding:AFFormURLParameterEncoding];
     NSMutableURLRequest *request = [httpClient requestWithMethod:@"POST"
-                                                            path:path
+                                                            path:@"http://localhost:8080/user/changeStatus"
                                                       parameters:params];
     
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request
