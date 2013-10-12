@@ -12,6 +12,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *nameLabel;
 @property (weak, nonatomic) IBOutlet UILabel *timeZoneLabel;
 @property (weak, nonatomic) IBOutlet UILabel *lastSyncedLabel;
-@property (weak, nonatomic) IBOutlet UILabel *availabilityLabel;
+@property (weak, nonatomic) IBOutlet UIView *contactCell;
+@property (weak, nonatomic) IBOutlet UIImageView *statusImage;
 
 @end

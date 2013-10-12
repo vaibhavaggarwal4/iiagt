@@ -8,7 +8,7 @@
 
 #import "LoginViewController.h"
 #import "SettingsViewController.h"
-
+#import "AppDelegate.h"
 @interface LoginViewController ()
 
 @end
@@ -120,6 +120,9 @@ SettingsViewController *settingsMessenger;
     [settingsMessenger dismissLoginViewController:self];
 //[self dismissViewControllerAnimated:YES completion:nil];
   //  [self.presentingViewController.presentingViewController.tabBarController setSelectedIndex:1];
+    [prefs setObject:nameField.text forKey:@"name"];
+    [prefs synchronize];
+
     
 }
 

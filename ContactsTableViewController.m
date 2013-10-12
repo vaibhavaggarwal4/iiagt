@@ -12,38 +12,47 @@
 #import "ContactsCell.h"
 #import "ContactViewController.h"
 #import "AppDelegate.h"
+#import "Contact.h"
 @interface ContactsTableViewController ()
+
+@property(strong,nonatomic)NSMutableArray *contactsArray;
+/*
 @property(strong,nonatomic)NSMutableArray *contactPhoneNumbers;
 @property(strong,nonatomic)NSMutableDictionary *contactsLastSyncedDictionary;
 @property(strong,nonatomic)NSMutableDictionary *contactsLocalTimeDictionary;
 @property(strong,nonatomic)NSMutableDictionary *contactNamesDictionary;
 @property(strong,nonatomic)NSMutableDictionary *contactHasViberDictionary;
 @property(strong,nonatomic)NSMutableDictionary *contactHasWhatsappDictionary;
-@property(strong,nonatomic)NSMutableDictionary *contactAvailabilityDictionary;
+@property(strong,nonatomic)NSMutableDictionary *contactAvailabilityDictionary;*/
 @property(strong,nonatomic)UILabel *availabilityLabel;
 @property(strong,nonatomic)NSString *availabilityStatus;
 @property(strong,nonatomic)NSDictionary *selfDataDictionary;
 @property(strong,nonatomic)NSArray *controlItems;
 @property(strong,nonatomic)UISegmentedControl *controlSegment;
 @property(strong,nonatomic)NSMutableDictionary *availabilityResponse;
+@property(strong,nonatomic)NSMutableArray *filteredContacts;
 @end
 
 @implementation ContactsTableViewController
 @synthesize serverResponse;
-@synthesize contactNamesDictionary;
-@synthesize contactPhoneNumbers;
-@synthesize contactsLastSyncedDictionary;
-@synthesize contactsLocalTimeDictionary;
-@synthesize contactHasViberDictionary;
-@synthesize contactHasWhatsappDictionary;
+//@synthesize contactNamesDictionary;
+//@synthesize contactPhoneNumbers;
+//@synthesize contactsLastSyncedDictionary;
+//@synthesize contactsLocalTimeDictionary;
+//@synthesize contactHasViberDictionary;
+//@synthesize contactHasWhatsappDictionary;
+//@synthesize contactAvailabilityDictionary;
+
 @synthesize availabilityLabel;
 @synthesize availabilityStatus;
 @synthesize selfDataDictionary;
 @synthesize controlItems;
 @synthesize controlSegment;
-@synthesize contactAvailabilityDictionary;
 @synthesize availabilityResponse;
+@synthesize filteredContacts;
+@synthesize contactsArray;
 bool available=true;
+NSInteger controlSelectedIndex;
 UIApplication *networkIndicator;
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -57,26 +66,32 @@ UIApplication *networkIndicator;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    contactPhoneNumbers=[[NSMutableArray alloc]init];
+    /*contactPhoneNumbers=[[NSMutableArray alloc]init];
     contactNamesDictionary = [[NSMutableDictionary alloc]init];
     contactsLocalTimeDictionary=[[NSMutableDictionary alloc]init];
     contactsLastSyncedDictionary=[[NSMutableDictionary alloc]init];
     contactHasViberDictionary = [[NSMutableDictionary alloc]init];
     contactHasWhatsappDictionary = [[NSMutableDictionary alloc]init];
-    contactAvailabilityDictionary=[[NSMutableDictionary alloc]init];
+    contactAvailabilityDictionary=[[NSMutableDictionary alloc]init];*/
+    contactsArray=[[NSMutableArray alloc]init];
+    filteredContacts=[[NSMutableArray alloc]init];
     
     networkIndicator= [UIApplication sharedApplication];
     [self.refreshControl addTarget:self action:@selector(loadDataInBackgroundThread) forControlEvents:UIControlEventValueChanged];
     
-    
     controlItems = [NSArray arrayWithObjects: @"Available", @"Busy", @"Driving", nil];
+    
     controlSegment = [[UISegmentedControl alloc]initWithItems:controlItems];
     [controlSegment addTarget:self action:@selector(updateAvailabilityAndControl :) forControlEvents:UIControlEventValueChanged];
     controlSegment.frame = CGRectMake(60, 40, 200, 20);
+    
+    
     self.navigationItem.titleView=controlSegment;
     [self loadDataInBackgroundThread];
-    }
+    
+
+}
+
 
 - (void)didReceiveMemoryWarning
 {
@@ -94,33 +109,37 @@ UIApplication *networkIndicator;
     return 40;
 }
 -(UIView *) tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-    UIView *headerView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 100)];
-    headerView.backgroundColor=[UIColor greenColor];
-    headerView.alpha=0.7f;
-    availabilityLabel=[[UILabel alloc]initWithFrame:CGRectMake(60, 10, 200, 20)];
-    //availabilityLabel.center=headerView.center;
-    [availabilityLabel setTextAlignment:NSTextAlignmentCenter];
     
+        UIView *headerView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 100)];
+        availabilityLabel=[[UILabel alloc]initWithFrame:CGRectMake(60, 10, 200, 20)];
+        //availabilityLabel.center=headerView.center;
+        [availabilityLabel setTextAlignment:NSTextAlignmentCenter];
+        
     
+        if([availabilityStatus isEqualToString:@"Available"]){
+            controlSegment.selectedSegmentIndex = 0;
+            headerView.backgroundColor=[UIColor greenColor];
+
+            
+        }else if([availabilityStatus isEqualToString:@"Busy"])
+        {
+            controlSegment.selectedSegmentIndex = 1;
+            headerView.backgroundColor=[UIColor redColor];
+
+            
+        }else{
+            controlSegment.selectedSegmentIndex = 2;
+            headerView.backgroundColor=[UIColor yellowColor];
+
+            
+        }
+        // [headerView addSubview:controlSegment];
+        availabilityLabel.text=availabilityStatus;
+        headerView.alpha=0.7f;
+        [headerView addSubview:availabilityLabel];
+        controlSelectedIndex=controlSegment.selectedSegmentIndex;
+        return headerView;
     
-    //controlSegment.frame = CGRectMake(60, 40, 200, 20);
-    
-    if([availabilityStatus isEqualToString:@"Available"]){
-        controlSegment.selectedSegmentIndex = 0;
-
-    }else if([availabilityStatus isEqualToString:@"Busy"])
-    {
-        controlSegment.selectedSegmentIndex = 1;
-
-    }else{
-        controlSegment.selectedSegmentIndex = 2;
-
-    }
-   // [headerView addSubview:controlSegment];
-    availabilityLabel.text=availabilityStatus;
-    [headerView addSubview:availabilityLabel];
-
-    return headerView;
 }
 
 
@@ -129,36 +148,93 @@ UIApplication *networkIndicator;
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [[serverResponse valueForKey:@"contacts"] count];
+    
+    if (tableView == self.searchDisplayController.searchResultsTableView) {
+        return [filteredContacts count];
+    } else {
+        return [contactsArray count];
+    }
+    
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    
     static NSString *contactCellIdentifier = @"contactCell";
     ContactsCell *contactCell = (ContactsCell *)[tableView dequeueReusableCellWithIdentifier:contactCellIdentifier];
+    
     if (contactCell == nil)
     {
         
         NSArray *nib = [[NSBundle mainBundle] loadNibNamed:@"ContactsCell" owner:self options:nil];
 		contactCell = [nib objectAtIndex:0];
     }
-    // Configure the cell...
-    NSString *number = [contactPhoneNumbers objectAtIndex:indexPath.row];
-    contactCell.nameLabel.text = [contactNamesDictionary valueForKey:number];
-    contactCell.timeZoneLabel.text=[contactsLocalTimeDictionary valueForKey:number];
-    contactCell.lastSyncedLabel.text=[contactsLastSyncedDictionary valueForKey:number];
-    if(![[contactAvailabilityDictionary valueForKey:number] isEqualToString:@"Available"]){
-        contactCell.availabilityLabel.textColor=[UIColor redColor];
-    }
-    contactCell.availabilityLabel.text=[contactAvailabilityDictionary valueForKey:number];
     
+    Contact *contact;
+    
+    if (tableView == self.searchDisplayController.searchResultsTableView) {
+        
+        contact = [filteredContacts objectAtIndex:indexPath.row];
+    }
+    else{
+        contact = [contactsArray objectAtIndex:indexPath.row];
+
+    }
+    
+        contactCell.nameLabel.text = contact.name;
+        contactCell.timeZoneLabel.text=contact.localTime;
+        contactCell.lastSyncedLabel.text=contact.lastSynced;
+    
+        if([contact.availability isEqualToString:@"Available"]){
+            contactCell.statusImage.image=[UIImage imageNamed:@"available.png"];
+            
+        }
+        else if([contact.availability isEqualToString:@"Busy"]){
+            //contactCell.availabilityLabel.textColor=[UIColor redColor];
+            contactCell.statusImage.image=[UIImage imageNamed:@"busy.png"];
+            
+        }
+        else{
+            contactCell.statusImage.image=[UIImage imageNamed:@"car.png"];
+            //contactCell.availabilityLabel.textColor=[UIColor redColor];
+            
+            
+        }
+        
+    
+    /*else {
+    
+    
+    // Configure the cell...
+        NSString *number = [contactPhoneNumbers objectAtIndex:indexPath.row];
+        contactCell.nameLabel.text = [contactNamesDictionary valueForKey:number];
+        contactCell.timeZoneLabel.text=[contactsLocalTimeDictionary valueForKey:number];
+        contactCell.lastSyncedLabel.text=[contactsLastSyncedDictionary valueForKey:number];
+        if([[contactAvailabilityDictionary valueForKey:number] isEqualToString:@"Available"]){
+            contactCell.statusImage.image=[UIImage imageNamed:@"available.png"];
+
+        }
+       else if([[contactAvailabilityDictionary valueForKey:number] isEqualToString:@"Busy"]){
+            //contactCell.availabilityLabel.textColor=[UIColor redColor];
+            contactCell.statusImage.image=[UIImage imageNamed:@"busy.png"];
+            
+        }
+        else{
+            contactCell.statusImage.image=[UIImage imageNamed:@"car.png"];
+            //contactCell.availabilityLabel.textColor=[UIColor redColor];
+
+
+            }
+        }*/
+   // contactCell.availabilityLabel.text=[contactAvailabilityDictionary valueForKey:number];
     return contactCell;
+    
 }
 
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    [self performSegueWithIdentifier:@"contactSegue" sender:[self.tableView cellForRowAtIndexPath:indexPath]];
+    [self performSegueWithIdentifier:@"contactSegue" sender:tableView];
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
@@ -169,17 +245,70 @@ UIApplication *networkIndicator;
     if([segue.identifier isEqualToString:@"contactSegue"])
         
     {
-        NSIndexPath *path = [self.tableView indexPathForSelectedRow];
         ContactViewController *destinationViewController = segue.destinationViewController;
-        NSString *number = [contactPhoneNumbers objectAtIndex:path.row];
+        Contact *contact;
+        if(sender == self.searchDisplayController.searchResultsTableView) {
+            NSIndexPath *path = [self.searchDisplayController.searchResultsTableView indexPathForSelectedRow];
+
+            contact = [filteredContacts objectAtIndex:path.row];
+        }
+        else{
+            NSIndexPath *path = [self.tableView indexPathForSelectedRow];
+
+            contact = [contactsArray objectAtIndex:path.row];
+        }
+        
+        
+        destinationViewController.passedName = contact.name;
+        destinationViewController.passedPhoneNumber=contact.number;
+        destinationViewController.hasWhatsapp = contact.hasWhatsapp;
+        destinationViewController.hasViber = contact.hasViber;
+        
+        /*NSString *number = [contactPhoneNumbers objectAtIndex:path.row];
         destinationViewController.passedName=[contactNamesDictionary valueForKey:number];
         destinationViewController.passedPhoneNumber=number;
         destinationViewController.hasWhatsapp=[contactHasWhatsappDictionary valueForKey:number];
-        destinationViewController.hasViber=[contactHasViberDictionary valueForKey:number];
+        destinationViewController.hasViber=[contactHasViberDictionary valueForKey:number];*/
         
         
     }
 
+}
+
+-(void)filterContentForSearchText:(NSString*)searchText scope:(NSString*)scope {
+    // Update the filtered array based on the search text and scope.
+    // Remove all objects from the filtered search array
+    [filteredContacts removeAllObjects];
+    NSPredicate *predicate;
+    // Filter the array using NSPredicate
+    NSString *regEx = @"^[0-9]*$";
+    NSPredicate *phoneTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", regEx];
+    
+    if([phoneTest evaluateWithObject:searchText]){
+        predicate = [NSPredicate predicateWithFormat:@"SELF.number BEGINSWITH[c] %@",searchText];
+        filteredContacts = [NSMutableArray arrayWithArray:[contactsArray filteredArrayUsingPredicate:predicate]];
+    }
+    
+    else{
+    predicate = [NSPredicate predicateWithFormat:@"SELF.name contains[c] %@",searchText];
+    filteredContacts = [NSMutableArray arrayWithArray:[contactsArray filteredArrayUsingPredicate:predicate]];
+    }
+}
+
+-(BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchString:(NSString *)searchString {
+    // Tells the table data source to reload when text changes
+    [self filterContentForSearchText:searchString scope:
+     [[self.searchDisplayController.searchBar scopeButtonTitles] objectAtIndex:[self.searchDisplayController.searchBar selectedScopeButtonIndex]]];
+    // Return YES to cause the search result table view to be reloaded.
+    return YES;
+}
+
+-(BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchScope:(NSInteger)searchOption {
+    // Tells the table data source to reload when scope bar selection changes
+    [self filterContentForSearchText:self.searchDisplayController.searchBar.text scope:
+     [[self.searchDisplayController.searchBar scopeButtonTitles] objectAtIndex:searchOption]];
+    // Return YES to cause the search result table view to be reloaded.
+    return YES;
 }
 /*
 // Override to support conditional editing of the table view.
@@ -222,6 +351,9 @@ UIApplication *networkIndicator;
 
 -(void)loadDataInBackgroundThread{
     
+    if(contactsArray.count>0){
+        [contactsArray removeAllObjects];
+    }
     networkIndicator.networkActivityIndicatorVisible=YES;
     
     dispatch_queue_t loadDataQueue = dispatch_queue_create("dataLoadingQueue", NULL);
@@ -230,13 +362,15 @@ UIApplication *networkIndicator;
         [self loadSelfStatus];
         [self loadData];
         
-        dispatch_sync(dispatch_get_main_queue(), ^{
+        dispatch_async(dispatch_get_main_queue(), ^{
             [self.refreshControl endRefreshing];
             networkIndicator.networkActivityIndicatorVisible=NO;
         });
         
         
     });
+   
+
 }
 
 
@@ -254,12 +388,10 @@ UIApplication *networkIndicator;
                                             success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
                                                 selfDataDictionary =(NSDictionary *) JSON;
                                                 availabilityStatus=[[[selfDataDictionary valueForKey:@"details"] valueForKey:@"user_set_busy"] objectAtIndex:0];
-                                                //self.navigationItem.title=availabilityStatus;
                                                 //[self.tableView reloadData];
                                                     }
                                         
                                 failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
-                                                    // Message for the geeks
                                                     UIAlertView *failure = [[UIAlertView alloc] initWithTitle:@"Error Retrieving Profile Data"
                                                     message:[NSString stringWithFormat:@"%@",error]
                                                     delegate:nil
@@ -285,10 +417,10 @@ UIApplication *networkIndicator;
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request
                                           
                     success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
-                        //self.response = (NSDictionary *) JSON;
                         serverResponse =(NSDictionary *) JSON;
                         [self arrangeDataToDisplay:serverResponse];
-                        [self.tableView reloadData];
+                       //[self.tableView reloadData];
+                        [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationAutomatic];
                     }
                                           
                     failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
@@ -305,7 +437,6 @@ UIApplication *networkIndicator;
 }
 
 -(IBAction)updateAvailabilityAndControl  :(id)sender{
-    //NSLog(@"Hey there %@",[controlSegment titleForSegmentAtIndex:[controlSegment selectedSegmentIndex]]);
     [self updateAvailability:[controlSegment titleForSegmentAtIndex:[controlSegment selectedSegmentIndex]]];
 
 }
@@ -329,31 +460,34 @@ UIApplication *networkIndicator;
 
         success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
             // parse response if status true, only then update
-            if([[JSON valueForKey:@"status"] isEqualToString:@"true" ]){
-                availabilityStatus=available;
-                [self.tableView reloadData];
+                    if([[JSON valueForKey:@"status"] isEqualToString:@"true" ]){
+                        availabilityStatus=available;
+                        [self.tableView reloadData];
 
-            }
-            else{
-                UIAlertView *failure = [[UIAlertView alloc] initWithTitle:@"Could not change status"
-                                                                  message:[NSString stringWithFormat:@"Try again later"]
-                                                                 delegate:nil
-                                                        cancelButtonTitle:@"OK" otherButtonTitles:nil];
-                [failure show];
+                    }
+                    else{
+                        
+                        UIAlertView *failure = [[UIAlertView alloc] initWithTitle:@"Could not change status"
+                                                                          message:[NSString stringWithFormat:@"Try again later"]
+                                                                         delegate:nil
+                                                                cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                        controlSegment.selectedSegmentIndex=controlSelectedIndex;
+                        [failure show];
 
-                
-            }
-            
+                        
+                    }
+                    
                 }
 
-                                failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
-                                    // Message for the geeks
-                                    UIAlertView *failure = [[UIAlertView alloc] initWithTitle:@"Could not change status"
-                                                                                      message:[NSString stringWithFormat:@"%@",error]
-                                                                                     delegate:nil
-                                                                            cancelButtonTitle:@"OK" otherButtonTitles:nil];
-                                    [failure show];
-                                }];
+        failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
+                    // Message for the geeks
+                    UIAlertView *failure = [[UIAlertView alloc] initWithTitle:@"Could not change status"
+                                                                      message:[NSString stringWithFormat:@"%@",error]
+                                                                     delegate:nil
+                                                            cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            controlSegment.selectedSegmentIndex=controlSelectedIndex;
+            [failure show];
+                }];
 
 [operation start];
 
@@ -371,21 +505,33 @@ UIApplication *networkIndicator;
     
     for(id contact in [response valueForKeyPath:@"contacts"]){
         //NSLog(@"%@",contact);
-        NSString *number = [contact valueForKey:@"user_phone_number"];
+        
+        Contact *appContact = [[Contact alloc]init];
+        
+        appContact.number = [contact valueForKey:@"user_phone_number"];
+        appContact.name = [contact valueForKeyPath:@"user_name"];
+        appContact.lastSynced = [self getDateFromTimeStamp:[contact valueForKeyPath:@"last_synced"]];
+        appContact.localTime =[self giveTimeForTimeZone:[contact valueForKeyPath:@"user_local_time"] withFormatter:formatter andTime:now];
+        
+        appContact.hasWhatsapp= [contact valueForKeyPath:@"has_whatsapp"];
+        appContact.hasViber = [contact valueForKeyPath:@"has_viber"] ;
+        appContact.availability = [contact valueForKeyPath:@"user_set_busy"] ;
+        
+        [self.contactsArray addObject:appContact];
         
         
-        [self.contactPhoneNumbers addObject:number];
-        [self.contactNamesDictionary setObject:[contact valueForKeyPath:@"user_name"] forKey:number];
+       // NSString *number = [contact valueForKey:@"user_phone_number"];
+        //[self.contactPhoneNumbers addObject:number];
+        //[self.contactNamesDictionary setObject:[contact valueForKeyPath:@"user_name"] forKey:number];
+        //[cNames addObject:[contact valueForKeyPath:@"user_name"]];
+       // [self.contactsLocalTimeDictionary setObject:[self giveTimeForTimeZone:[contact valueForKeyPath:@"user_local_time"] withFormatter:formatter andTime:now] forKey:number];
         
-        [self.contactsLocalTimeDictionary setObject:[self giveTimeForTimeZone:[contact valueForKeyPath:@"user_local_time"] withFormatter:formatter andTime:now] forKey:number];
-        
-        [self.contactsLastSyncedDictionary setObject:[self getDateFromTimeStamp:[contact valueForKeyPath:@"last_synced"]] forKey:number];
-        [self.contactHasViberDictionary setObject:[contact valueForKeyPath:@"has_viber"] forKey:number];
-        [self.contactHasWhatsappDictionary setObject:[contact valueForKeyPath:@"has_whatsapp"] forKey:number];
-        [self.contactAvailabilityDictionary setObject:[contact valueForKeyPath:@"user_set_busy"] forKey:number];
+       // [self.contactsLastSyncedDictionary setObject:[self getDateFromTimeStamp:[contact valueForKeyPath:@"last_synced"]] forKey:number];
+       // [self.contactHasViberDictionary setObject:[contact valueForKeyPath:@"has_viber"] forKey:number];
+      //  [self.contactHasWhatsappDictionary setObject:[contact valueForKeyPath:@"has_whatsapp"] forKey:number];
+       // [self.contactAvailabilityDictionary setObject:[contact valueForKeyPath:@"user_set_busy"] forKey:number];
         
     }
-    
     /*NSLog(@"%@",contactPhoneNumbers);
     NSLog(@"%@",contactNamesDictionary);
     NSLog(@"%@",contactsLocalTimeDictionary);

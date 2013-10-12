@@ -38,14 +38,16 @@ ABAddressBookRef addressBook ;
     
     ABAddressBookRegisterExternalChangeCallback(addressBook,addressBookChanged,(__bridge void *)(self));
     [self determineAccessToAddressBookAndHandle];
+
     
     
 }
 -(void)viewWillAppear:(BOOL)animated{
-    [settingsTable reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationAutomatic];
+    //[settingsTable reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationAutomatic];
 }
 -(void)viewDidAppear:(BOOL)animated{
-    
+    //[prefs removeObjectForKey:@"name"];
+    //[prefs synchronize];
     if([prefs valueForKey:@"name"]){
     
     }
@@ -54,9 +56,6 @@ ABAddressBookRef addressBook ;
 
     }
     
-    if(!loggedIn){
-        loggedIn=true;
-    }
 }
 -(void)dismissLoginViewController:(UIViewController *)loginViewController{
     

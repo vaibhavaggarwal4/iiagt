@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ContactsTableViewController : UITableViewController
+@interface ContactsTableViewController : UITableViewController<UISearchBarDelegate, UISearchDisplayDelegate>
+
+@property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
 @property(strong,nonatomic)NSDictionary *serverResponse;
 @end

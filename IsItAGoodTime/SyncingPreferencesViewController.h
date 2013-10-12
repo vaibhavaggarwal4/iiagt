@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface SyncingPreferencesViewController : UIViewController
+@interface SyncingPreferencesViewController : UIViewController <UIPickerViewDataSource, UIPickerViewDelegate> 
 @property (weak, nonatomic) IBOutlet UIPickerView *startTimePicker;
 @property (weak, nonatomic) IBOutlet UIPickerView *endTimePicker;
 

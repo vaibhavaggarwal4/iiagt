@@ -7,9 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6D121DCF1807A9710062E4CF /* car.png in Resources */ = {isa = PBXBuildFile; fileRef = 6D121DCC1807A9710062E4CF /* car.png */; };
+		6D121DD01807A9710062E4CF /* busy.png in Resources */ = {isa = PBXBuildFile; fileRef = 6D121DCD1807A9710062E4CF /* busy.png */; };
+		6D121DD11807A9710062E4CF /* available.png in Resources */ = {isa = PBXBuildFile; fileRef = 6D121DCE1807A9710062E4CF /* available.png */; };
 		6D2739E817F28F2800D88904 /* EventKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D2739E617F28F2800D88904 /* EventKit.framework */; };
 		6D2739E917F28F2800D88904 /* EventKitUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D2739E717F28F2800D88904 /* EventKitUI.framework */; };
 		6D71E1E217FE569C00D263A4 /* ProfileSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D71E1E117FE569C00D263A4 /* ProfileSettingsViewController.m */; };
+		6D7F42D31809136A00E3D22A /* Contact.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D7F42D21809136A00E3D22A /* Contact.m */; };
 		6D83244117F7D38300369FD4 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D83244017F7D38300369FD4 /* LoginViewController.m */; };
 		6D83244317F8F60700369FD4 /* SettingCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6D83244217F8F60700369FD4 /* SettingCell.xib */; };
 		6D83244617F8F64D00369FD4 /* SettingCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D83244517F8F64D00369FD4 /* SettingCell.m */; };
@@ -49,10 +53,15 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		6D121DCC1807A9710062E4CF /* car.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = car.png; sourceTree = "<group>"; };
+		6D121DCD1807A9710062E4CF /* busy.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = busy.png; sourceTree = "<group>"; };
+		6D121DCE1807A9710062E4CF /* available.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = available.png; sourceTree = "<group>"; };
 		6D2739E617F28F2800D88904 /* EventKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EventKit.framework; path = System/Library/Frameworks/EventKit.framework; sourceTree = SDKROOT; };
 		6D2739E717F28F2800D88904 /* EventKitUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EventKitUI.framework; path = System/Library/Frameworks/EventKitUI.framework; sourceTree = SDKROOT; };
 		6D71E1E017FE569C00D263A4 /* ProfileSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProfileSettingsViewController.h; sourceTree = "<group>"; };
 		6D71E1E117FE569C00D263A4 /* ProfileSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProfileSettingsViewController.m; sourceTree = "<group>"; };
+		6D7F42D11809136A00E3D22A /* Contact.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Contact.h; sourceTree = "<group>"; };
+		6D7F42D21809136A00E3D22A /* Contact.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Contact.m; sourceTree = "<group>"; };
 		6D83243F17F7D38300369FD4 /* LoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginViewController.h; sourceTree = "<group>"; };
 		6D83244017F7D38300369FD4 /* LoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginViewController.m; sourceTree = "<group>"; };
 		6D83244217F8F60700369FD4 /* SettingCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SettingCell.xib; sourceTree = "<group>"; };
@@ -132,6 +141,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		6D121DCA1807A9710062E4CF /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				6D121DCB1807A9710062E4CF /* Images */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		6D121DCB1807A9710062E4CF /* Images */ = {
+			isa = PBXGroup;
+			children = (
+				6D121DCC1807A9710062E4CF /* car.png */,
+				6D121DCD1807A9710062E4CF /* busy.png */,
+				6D121DCE1807A9710062E4CF /* available.png */,
+			);
+			path = Images;
+			sourceTree = "<group>";
+		};
 		6D83244717F8FD9D00369FD4 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
@@ -186,6 +213,9 @@
 				6DA9035117EBC74300728787 /* AFNetworking */,
 				6D83244717F8FD9D00369FD4 /* Settings */,
 				6DA9037717EBF5B500728787 /* ContactsCell.xib */,
+				6D121DCA1807A9710062E4CF /* Resources */,
+				6D7F42D11809136A00E3D22A /* Contact.h */,
+				6D7F42D21809136A00E3D22A /* Contact.m */,
 				6DA9037417EBF59200728787 /* ContactsCell.h */,
 				6DA9037517EBF59200728787 /* ContactsCell.m */,
 				6DA9034F17EBC69600728787 /* ContactsTableViewController.m */,
@@ -301,8 +331,11 @@
 			files = (
 				6D9F53EB17E94AED006B993F /* InfoPlist.strings in Resources */,
 				6D9F53F317E94AED006B993F /* Default.png in Resources */,
+				6D121DD11807A9710062E4CF /* available.png in Resources */,
+				6D121DD01807A9710062E4CF /* busy.png in Resources */,
 				6D83244317F8F60700369FD4 /* SettingCell.xib in Resources */,
 				6D9F53F517E94AED006B993F /* Default@2x.png in Resources */,
+				6D121DCF1807A9710062E4CF /* car.png in Resources */,
 				6D9F53F717E94AED006B993F /* Default-568h@2x.png in Resources */,
 				6DA9037817EBF5B500728787 /* ContactsCell.xib in Resources */,
 				6D9F53FA17E94AED006B993F /* MainStoryboard.storyboard in Resources */,
@@ -324,6 +357,7 @@
 				6D9F53ED17E94AED006B993F /* main.m in Sources */,
 				6D83244617F8F64D00369FD4 /* SettingCell.m in Sources */,
 				6D9F53F117E94AED006B993F /* AppDelegate.m in Sources */,
+				6D7F42D31809136A00E3D22A /* Contact.m in Sources */,
 				6DA9036C17EBC74300728787 /* AFXMLRequestOperation.m in Sources */,
 				6DA9037617EBF59200728787 /* ContactsCell.m in Sources */,
 				6DA9035017EBC69600728787 /* ContactsTableViewController.m in Sources */,

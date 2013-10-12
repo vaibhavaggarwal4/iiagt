@@ -12,7 +12,8 @@
 @synthesize nameLabel;
 @synthesize timeZoneLabel;
 @synthesize lastSyncedLabel;
-@synthesize availabilityLabel;
+@synthesize contactCell;
+@synthesize statusImage;
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
