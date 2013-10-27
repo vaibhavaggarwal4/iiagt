@@ -40,7 +40,7 @@ ABAddressBookRef addressBook ;
     ABAddressBookRegisterExternalChangeCallback(addressBook,addressBookChanged,(__bridge void *)(self));
     [self determineAccessToAddressBookAndHandle];
 
-    [prefs removeObjectForKey:@"name"];
+    [prefs removeObjectForKey:@"appUserUniqueHash"];
     [prefs synchronize];
     
     
@@ -51,7 +51,7 @@ ABAddressBookRef addressBook ;
 -(void)viewDidAppear:(BOOL)animated{
     //[prefs removeObjectForKey:@"name"];
     //[prefs synchronize];
-    if([prefs valueForKey:@"name"]){
+    if([prefs valueForKey:@"appUserUniqueHash"]){
 
     }
     else{

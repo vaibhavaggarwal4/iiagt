@@ -176,15 +176,11 @@ UIBarButtonItem *previosButton;
 }
 - (IBAction)loginButton:(id)sender {
     
-    NSLog(@"%@",nameField.text);
-    NSLog(@"%@",numberField.text);
+    
     //settingsMessenger = [[SettingsViewController alloc]init];
     //[settingsMessenger dismissLoginViewController:self];
 //[self dismissViewControllerAnimated:YES completion:nil];
   //  [self.presentingViewController.presentingViewController.tabBarController setSelectedIndex:1];
-    [prefs setObject:nameField.text forKey:@"name"];
-    [prefs synchronize];
-    
     
     // Sign Up/ Log the user in
     // if server response is 200 and true, save all the information
@@ -199,11 +195,101 @@ UIBarButtonItem *previosButton;
     [prefs setObject:appUserUniqueHash forKey:@"appUserUniqueHash"];
     [prefs synchronize];
 
+    
+    // verify the name is entered, number is legal
+    // take out the local time zone of the user
+    // we need to ask him that
+    
+    
+    
+    
+    
+   // [self signUpWithNumber:numberField.text];
+    if([self isNamePresent] && [self isNumberTenDigits]){
+        //[self signUpWithNumber:numberField.text name:nameField.text];
+
+    }
+    
+    
+    
+    
     [self performSegueWithIdentifier:@"moreInfoAfterLoginSegue" sender:self];
 
     
 }
+-(BOOL)isNamePresent{
 
+    if(nameField.text.length<1){
+    
+        return FALSE;
+        // show message
+    }
+    else{
+        return TRUE;
+    }
+    
+}
+-(BOOL)isNumberTenDigits{
+    // check that all are digits
+    if(numberField.text.length==10){
+        return TRUE;
+    }
+    else{
+        return FALSE;
+        //show message
+    }
+}
+
+-(void)signUpWithNumber:(NSString *) number name:(NSString *)name {
+    
+    NSMutableDictionary *params = [[NSMutableDictionary alloc]init];
+    [params setValue:number forKey:@"phone_number"];
+    [params setValue:name forKey:@"name"];
+    [params setObject:[[NSTimeZone localTimeZone]name] forKey:@"local_time"];
+
+    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:[NSURL URLWithString:BASEURL]];
+    [httpClient setParameterEncoding:AFFormURLParameterEncoding];
+    NSMutableURLRequest *request = [httpClient requestWithMethod:@"POST"
+                                                            path:[NSString stringWithFormat:@"%@user",BASEURL]
+                                                      parameters:params];
+    
+    AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request
+                                         
+        success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+
+            if([[JSON valueForKey:@"status"] isEqualToString:@"false" ]){
+            
+                NSLog(@"%@",[JSON valueForKey:@"description"]);
+            }
+            else{
+                appUserPhoneNumber=number;
+                appUserUniqueHash=[JSON valueForKey:@"unique_hash"];
+                [prefs setObject:appUserPhoneNumber forKey:@"appUserPhoneNumber"];
+                [prefs setObject:appUserUniqueHash forKey:@"appUserUniqueHash"];
+                [prefs synchronize];
+
+                [self performSegueWithIdentifier:@"moreInfoAfterLoginSegue" sender:self];
+
+
+
+            }
+            
+            
+        }
+        failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
+                // Message for the geeks
+                UIAlertView *failure = [[UIAlertView alloc] initWithTitle:@"Error in connecting to our servers"
+                message:[NSString stringWithFormat:@"%@",error]
+                delegate:nil
+            cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            [failure show];
+        }];
+    
+    [operation start];
+    
+
+
+}
 
 
 
