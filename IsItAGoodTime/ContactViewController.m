@@ -36,11 +36,13 @@ NSString *trueVal = @"1";
     [self.view bringSubviewToFront:contactImage];
     
     if([hasViber intValue]==1){
+        viberButtonOutlet.alpha=1.0;
         viberButtonOutlet.enabled=true;
         
     }
     
     if([hasWhatsapp intValue]==1){
+        whatsappButtonOutlet.alpha=1.0;
         whatsappButtonOutlet.enabled=true;
         
     }
