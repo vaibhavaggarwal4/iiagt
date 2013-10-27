@@ -414,7 +414,6 @@ UIApplication *networkIndicator;
                                          
                                             success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
                                                 selfDataDictionary =(NSDictionary *) JSON;
-                                                NSLog(@"%@",selfDataDictionary);
                                                 NSString *calendarSync=[[[selfDataDictionary valueForKey:@"details"] valueForKey:@"calendar_sync"] objectAtIndex:0];
                                                 if([calendarSync isEqualToString:@"No"]){
                                                     isCalendarSyncOn=NO;
@@ -459,7 +458,9 @@ UIApplication *networkIndicator;
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request
                                           
                     success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+                    // check for status true or not
                         serverResponse =(NSDictionary *) JSON;
+                    
                         [self arrangeDataToDisplay:serverResponse];
                        //[self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationAutomatic];
                         [self.tableView reloadData];
@@ -641,12 +642,16 @@ UIApplication *networkIndicator;
        // [self.contactAvailabilityDictionary setObject:[contact valueForKeyPath:@"user_set_busy"] forKey:number];
         
     }
-    /*NSLog(@"%@",contactPhoneNumbers);
-    NSLog(@"%@",contactNamesDictionary);
-    NSLog(@"%@",contactsLocalTimeDictionary);
-    NSLog(@"%@",contactsLastSyncedDictionary);
-    NSLog(@"%@",contactHasViberDictionary);
-    NSLog(@"%@",contactHasWhatsappDictionary);*/
+    if([contactsArray count]<1){
+        UIAlertView *noContacts = [[UIAlertView alloc] initWithTitle:@"You do not have any contacts using the app"
+                                                          message:[NSString stringWithFormat:@"Go to all contacts and invite your friends"]
+                                                         delegate:nil
+                                                cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        controlSegment.selectedSegmentIndex=controlSelectedIndex;
+        [noContacts show];
+
+    
+    }
     
     
 
@@ -671,9 +676,7 @@ UIApplication *networkIndicator;
     return formattedDate;
     
 }
-/*
- SELECT * FROM (SELECT * FROM users WHERE users.`user_id` IN (1,24,25,26,27,28)) as u LEFT JOIN (SELECT *FROM calendar_meetings WHERE `calendar_meetings`.`start_time`<421 && `calendar_meetings`.`end_time`>421) as c on c.`user_id` =u.`user_id`; 
- */
+
 
 
 @end

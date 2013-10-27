@@ -16,7 +16,6 @@
 		6D2E6663181CDCFE0032A988 /* available.png in Resources */ = {isa = PBXBuildFile; fileRef = 6D2E664A181CDCFE0032A988 /* available.png */; };
 		6D2E6664181CDCFE0032A988 /* busy.png in Resources */ = {isa = PBXBuildFile; fileRef = 6D2E664B181CDCFE0032A988 /* busy.png */; };
 		6D2E6665181CDCFE0032A988 /* car.png in Resources */ = {isa = PBXBuildFile; fileRef = 6D2E664C181CDCFE0032A988 /* car.png */; };
-		6D2E6666181CDCFE0032A988 /* circle.png in Resources */ = {isa = PBXBuildFile; fileRef = 6D2E664D181CDCFE0032A988 /* circle.png */; };
 		6D2E6668181CDCFE0032A988 /* man.png in Resources */ = {isa = PBXBuildFile; fileRef = 6D2E664F181CDCFE0032A988 /* man.png */; };
 		6D2E6669181CDCFE0032A988 /* no_image.png in Resources */ = {isa = PBXBuildFile; fileRef = 6D2E6650181CDCFE0032A988 /* no_image.png */; };
 		6D2E666A181CDCFE0032A988 /* phone-book.png in Resources */ = {isa = PBXBuildFile; fileRef = 6D2E6651181CDCFE0032A988 /* phone-book.png */; };
@@ -456,7 +455,6 @@
 				6D2E6673181CDCFE0032A988 /* 1.tiff in Resources */,
 				6D9F540117E94AED006B993F /* first@2x.png in Resources */,
 				6D9F540617E94AED006B993F /* second.png in Resources */,
-				6D2E6666181CDCFE0032A988 /* circle.png in Resources */,
 				6D2E666B181CDCFE0032A988 /* spanner.png in Resources */,
 				6D2E6672181CDCFE0032A988 /* 7.tiff in Resources */,
 				6D2E6669181CDCFE0032A988 /* no_image.png in Resources */,
