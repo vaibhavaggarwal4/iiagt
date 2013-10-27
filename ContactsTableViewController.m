@@ -51,7 +51,10 @@
 @synthesize availabilityResponse;
 @synthesize filteredContacts;
 @synthesize contactsArray;
+@synthesize searchBar;
 bool available=true;
+bool isCalendarSyncOn=NO;
+UIView *headerView;
 NSInteger controlSelectedIndex;
 UIApplication *networkIndicator;
 - (id)initWithStyle:(UITableViewStyle)style
@@ -79,13 +82,15 @@ UIApplication *networkIndicator;
     networkIndicator= [UIApplication sharedApplication];
     [self.refreshControl addTarget:self action:@selector(loadDataInBackgroundThread) forControlEvents:UIControlEventValueChanged];
     
-    controlItems = [NSArray arrayWithObjects: @"Available", @"Busy", @"Driving", nil];
+    controlItems = [NSArray arrayWithObjects: @"Available", @"Busy", @"Driving",@"Calendar", nil];
     
     controlSegment = [[UISegmentedControl alloc]initWithItems:controlItems];
     [controlSegment addTarget:self action:@selector(updateAvailabilityAndControl :) forControlEvents:UIControlEventValueChanged];
     controlSegment.frame = CGRectMake(60, 40, 200, 20);
     
-    
+    CGRect newBounds = self.tableView.bounds;
+    newBounds.origin.y = newBounds.origin.y + searchBar.bounds.size.height;
+    self.tableView.bounds = newBounds;
     self.navigationItem.titleView=controlSegment;
     [self loadDataInBackgroundThread];
     
@@ -110,12 +115,22 @@ UIApplication *networkIndicator;
 }
 -(UIView *) tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
     
-        UIView *headerView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 100)];
+        headerView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 100)];
+        headerView.alpha=0.7f;
+
         availabilityLabel=[[UILabel alloc]initWithFrame:CGRectMake(60, 10, 200, 20)];
         //availabilityLabel.center=headerView.center;
         [availabilityLabel setTextAlignment:NSTextAlignmentCenter];
-        
-    
+        // get the users calendar sync yes or no
+        // if yes, see meeting start and end and then decide, basically set the availability status here
+        // if no do this
+    if(isCalendarSyncOn){
+        controlSegment.selectedSegmentIndex = 3;
+        headerView.backgroundColor=[UIColor blueColor];
+
+
+    }
+    else{
         if([availabilityStatus isEqualToString:@"Available"]){
             controlSegment.selectedSegmentIndex = 0;
             headerView.backgroundColor=[UIColor greenColor];
@@ -133,9 +148,9 @@ UIApplication *networkIndicator;
 
             
         }
+    }
         // [headerView addSubview:controlSegment];
         availabilityLabel.text=availabilityStatus;
-        headerView.alpha=0.7f;
         [headerView addSubview:availabilityLabel];
         controlSelectedIndex=controlSegment.selectedSegmentIndex;
         return headerView;
@@ -185,6 +200,8 @@ UIApplication *networkIndicator;
         contactCell.timeZoneLabel.text=contact.localTime;
         contactCell.lastSyncedLabel.text=contact.lastSynced;
     
+    if([contact.calendarSync isEqualToString:@"No"]){
+    
         if([contact.availability isEqualToString:@"Available"]){
             contactCell.statusImage.image=[UIImage imageNamed:@"available.png"];
             
@@ -198,10 +215,18 @@ UIApplication *networkIndicator;
             contactCell.statusImage.image=[UIImage imageNamed:@"car.png"];
             //contactCell.availabilityLabel.textColor=[UIColor redColor];
             
-            
         }
         
-    
+    }else{
+        if(![contact.meetingStartTime isKindOfClass:[NSNull class]]){
+            contactCell.statusImage.image=[UIImage imageNamed:@"busy.png"];
+
+        }
+        else{
+            contactCell.statusImage.image=[UIImage imageNamed:@"available.png"];
+
+        }
+    }
     /*else {
     
     
@@ -357,14 +382,16 @@ UIApplication *networkIndicator;
     networkIndicator.networkActivityIndicatorVisible=YES;
     
     dispatch_queue_t loadDataQueue = dispatch_queue_create("dataLoadingQueue", NULL);
-    [self.refreshControl beginRefreshing];
+   [self.refreshControl beginRefreshing];
     dispatch_async(loadDataQueue, ^{
-        [self loadSelfStatus];
         [self loadData];
+
+        [self loadSelfStatus];
         
         dispatch_async(dispatch_get_main_queue(), ^{
             [self.refreshControl endRefreshing];
             networkIndicator.networkActivityIndicatorVisible=NO;
+            
         });
         
         
@@ -376,20 +403,36 @@ UIApplication *networkIndicator;
 
 -(void)loadSelfStatus{
     NSMutableDictionary *params = [[NSMutableDictionary alloc]init];
-    [params setValue:@"f8b02e92e32f62d878e3289e04044057" forKey:@"unique_hash"];
-    [params setValue:@"7019361484" forKey:@"phone_number"];
+    [params setValue:[prefs valueForKey:@"appUserUniqueHash"] forKey:@"unique_hash"];
+    [params setValue:[prefs valueForKey:@"appUserPhoneNumber"] forKey:@"phone_number"];
     
-    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:[NSURL URLWithString:@"http://localhost:8080/"]];
+    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:[NSURL URLWithString:BASEURL]];
     NSMutableURLRequest *request = [httpClient requestWithMethod:@"GET"
-                                                            path:@"http://localhost:8080/user/self"
+                                                            path:[NSString stringWithFormat:@"%@user/self",BASEURL]
                                                       parameters:params];
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request
                                          
                                             success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
                                                 selfDataDictionary =(NSDictionary *) JSON;
+                                                NSLog(@"%@",selfDataDictionary);
+                                                NSString *calendarSync=[[[selfDataDictionary valueForKey:@"details"] valueForKey:@"calendar_sync"] objectAtIndex:0];
+                                                if([calendarSync isEqualToString:@"No"]){
+                                                    isCalendarSyncOn=NO;
                                                 availabilityStatus=[[[selfDataDictionary valueForKey:@"details"] valueForKey:@"user_set_busy"] objectAtIndex:0];
-                                                //[self.tableView reloadData];
+                                                }
+                                                    else{
+                                                        isCalendarSyncOn=YES;
+                                                        if([[[[selfDataDictionary valueForKey:@"details"] valueForKey:@"start_time"] objectAtIndex:0] isKindOfClass:[NSNull class]]){
+                                                            availabilityStatus=@"Available";                                                        }
+                                                        else{
+                                                        availabilityStatus=@"Busy";
+                                                        }
+                                                    
+                                                        [self.tableView reloadData];
+
+                                                    
                                                     }
+                                                }
                                         
                                 failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
                                                     UIAlertView *failure = [[UIAlertView alloc] initWithTitle:@"Error Retrieving Profile Data"
@@ -407,20 +450,19 @@ UIApplication *networkIndicator;
 -(void)loadData {
     
     NSMutableDictionary *params = [[NSMutableDictionary alloc]init];
-    [params setValue:@"f8b02e92e32f62d878e3289e04044057" forKey:@"unique_hash"];
-    [params setValue:@"7019361484" forKey:@"phone_number"];
-    
-    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:[NSURL URLWithString:@"http://localhost:8080/"]];
+    [params setValue:[prefs valueForKey:@"appUserUniqueHash"] forKey:@"unique_hash"];
+    [params setValue:[prefs valueForKey:@"appUserPhoneNumber"] forKey:@"phone_number"];
+    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:[NSURL URLWithString:BASEURL]];
     NSMutableURLRequest *request = [httpClient requestWithMethod:@"GET"
-                                                            path:@"http://localhost:8080/user"
+                                                            path:[NSString stringWithFormat:@"%@user",BASEURL]
                                                       parameters:params];
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request
                                           
                     success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
                         serverResponse =(NSDictionary *) JSON;
                         [self arrangeDataToDisplay:serverResponse];
-                       //[self.tableView reloadData];
-                        [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationAutomatic];
+                       //[self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationAutomatic];
+                        [self.tableView reloadData];
                     }
                                           
                     failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
@@ -437,23 +479,85 @@ UIApplication *networkIndicator;
 }
 
 -(IBAction)updateAvailabilityAndControl  :(id)sender{
+    if([[controlSegment titleForSegmentAtIndex:[controlSegment selectedSegmentIndex]] isEqualToString:@"Calendar"]){
+    // change calendar_sync to Yes
+    // figure out how that affects that availability status
+        [self turnCalendarOn];
+    }
+    else{
     [self updateAvailability:[controlSegment titleForSegmentAtIndex:[controlSegment selectedSegmentIndex]]];
-
+    }
 }
 
+-(void)turnCalendarOn{
+    
+    NSMutableDictionary *params = [[NSMutableDictionary alloc]init];
+    [params setValue:[prefs valueForKey:@"appUserUniqueHash"] forKey:@"unique_hash"];
+    [params setValue:[prefs valueForKey:@"appUserPhoneNumber"] forKey:@"phone_number"];
+    
+    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:[NSURL URLWithString:BASEURL]];
+    [httpClient setParameterEncoding:AFFormURLParameterEncoding];
+    NSMutableURLRequest *request = [httpClient requestWithMethod:@"POST"
+                                                            path:[NSString stringWithFormat:@"%@user/calendarSync",BASEURL]
+                                                      parameters:params];
+    
+    AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request
+                                         
+                success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+                    // parse response if status true, only then update
+                        if([[JSON valueForKey:@"status"] isEqualToString:@"true" ]){
+                                    //availabilityStatus=available;
+                            // call this in background thread
+                            // or if we do not want to make this call, we can send join the meeting table here as well
+                            // you should make this call, otherwise you would not know if the user has a meeting at this time or not
+                            isCalendarSyncOn=YES;
+
+                                    [self loadSelfStatus];
+                                  //  [self.tableView reloadData];
+                            
+                            
+                            }
+                        else{
+                            
+                            UIAlertView *failure = [[UIAlertView alloc] initWithTitle:@"Could not change status"
+                                                    message:[NSString stringWithFormat:@"Try again later"]
+                                                    delegate:nil
+                                                    cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                                                    controlSegment.selectedSegmentIndex=controlSelectedIndex;
+                                                    [failure show];
+                                                                                                
+                                                                                                
+                            }
+                                                                                            
+                }
+                failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
+                        // Message for the geeks
+                        UIAlertView *failure = [[UIAlertView alloc] initWithTitle:@"Could not change status"
+                        message:[NSString stringWithFormat:@"%@",error]
+                        delegate:nil
+                        cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                        controlSegment.selectedSegmentIndex=controlSelectedIndex;
+                        [failure show];
+                    }];
+    
+    [operation start];
+
+
+}
 -(void)updateAvailability:(NSString *) available{
     NSMutableDictionary *params = [[NSMutableDictionary alloc]init];
-    [params setValue:@"f8b02e92e32f62d878e3289e04044057" forKey:@"unique_hash"];
-    [params setValue:@"7019361484" forKey:@"phone_number"];
+    [params setValue:[prefs valueForKey:@"appUserUniqueHash"] forKey:@"unique_hash"];
+    [params setValue:[prefs valueForKey:@"appUserPhoneNumber"] forKey:@"phone_number"];
     [params setValue:@"user_set_busy" forKey:@"target"];
     [params setValue:available forKey:@"value"];
 
     
     
-       AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:[NSURL URLWithString:@"http://localhost:8080/"]];
+       AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:[NSURL URLWithString:BASEURL]];
     [httpClient setParameterEncoding:AFFormURLParameterEncoding];
+    
     NSMutableURLRequest *request = [httpClient requestWithMethod:@"POST"
-                                                            path:@"http://localhost:8080/user/changeStatus"
+                                                            path:[NSString stringWithFormat:@"%@user/changeStatus",BASEURL]
                                                       parameters:params];
 
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request
@@ -461,6 +565,7 @@ UIApplication *networkIndicator;
         success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
             // parse response if status true, only then update
                     if([[JSON valueForKey:@"status"] isEqualToString:@"true" ]){
+                        isCalendarSyncOn=NO;
                         availabilityStatus=available;
                         [self.tableView reloadData];
 
@@ -514,9 +619,13 @@ UIApplication *networkIndicator;
         appContact.localTime =[self giveTimeForTimeZone:[contact valueForKeyPath:@"user_local_time"] withFormatter:formatter andTime:now];
         
         appContact.hasWhatsapp= [contact valueForKeyPath:@"has_whatsapp"];
-        appContact.hasViber = [contact valueForKeyPath:@"has_viber"] ;
-        appContact.availability = [contact valueForKeyPath:@"user_set_busy"] ;
-        
+        appContact.hasViber = [contact valueForKeyPath:@"has_viber"];
+        appContact.availability = [contact valueForKeyPath:@"user_set_busy"];
+        appContact.calendarSync=[contact valueForKey:@"calendar_sync"];
+        if([appContact.calendarSync isEqualToString:@"Yes"]){
+            appContact.meetingStartTime=[contact valueForKey:@"start_time"];
+            appContact.meetingEndTime=[contact valueForKey:@"end_time"];
+        }
         [self.contactsArray addObject:appContact];
         
         
@@ -562,7 +671,9 @@ UIApplication *networkIndicator;
     return formattedDate;
     
 }
-
+/*
+ SELECT * FROM (SELECT * FROM users WHERE users.`user_id` IN (1,24,25,26,27,28)) as u LEFT JOIN (SELECT *FROM calendar_meetings WHERE `calendar_meetings`.`start_time`<421 && `calendar_meetings`.`end_time`>421) as c on c.`user_id` =u.`user_id`; 
+ */
 
 
 @end

@@ -48,6 +48,7 @@ NSNumber *off;
     
     if([[prefs valueForKey:@"viber"] isEqualToString:@"Yes" ]){
         viberSwitch.on=YES;
+        viberLabel.textColor=[UIColor greenColor];
         viberLabel.text=@"Yes";
     }
     else{
@@ -60,6 +61,7 @@ NSNumber *off;
     if([[prefs valueForKey:@"whatsapp"] isEqualToString:@"Yes"])
     {
         whatsappSwitch.on=YES;
+        whatsappLabel.textColor=[UIColor greenColor];
         whatsappLabel.text=@"Yes";
     }
     else{
@@ -85,6 +87,7 @@ NSNumber *off;
         
         [prefs setObject:@"Yes" forKey:@"viber"];
         [prefs synchronize];
+        viberLabel.textColor=[UIColor greenColor];
 
         viberLabel.text=@"Yes";
 
@@ -94,6 +97,8 @@ NSNumber *off;
         [self updateStatus:@"has_viber" withValue:off];
         [prefs setObject:@"No" forKey:@"viber"];
         [prefs synchronize];
+        viberLabel.textColor=[UIColor redColor];
+
         viberLabel.text=@"No";
   
 
@@ -106,6 +111,7 @@ NSNumber *off;
         [self updateStatus:@"has_whatsapp" withValue:on];
         [prefs setObject:@"Yes" forKey:@"whatsapp"];
         [prefs synchronize];
+        whatsappLabel.textColor=[UIColor greenColor];
 
         whatsappLabel.text=@"Yes";
     }
@@ -114,6 +120,7 @@ NSNumber *off;
         [self updateStatus:@"has_whatsapp" withValue:off];
         [prefs setObject:@"No" forKey:@"whatsapp"];
         [prefs synchronize];
+        whatsappLabel.textColor=[UIColor redColor];
 
         whatsappLabel.text=@"No";
     }
@@ -124,15 +131,15 @@ NSNumber *off;
 
     
      NSMutableDictionary *params = [[NSMutableDictionary alloc]init];
-    [params setValue:@"f8b02e92e32f62d878e3289e04044057" forKey:@"unique_hash"];
-    [params setValue:@"7019361484" forKey:@"phone_number"];
+    [params setValue:[prefs valueForKey:@"appUserUniqueHash"] forKey:@"unique_hash"];
+    [params setValue:[prefs valueForKey:@"appUserPhoneNumber"] forKey:@"phone_number"];
     [params setValue:target forKey:@"target"];
     [params setValue:value forKey:@"value"];
     
-    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:[NSURL URLWithString:@"http://localhost:8080/"]];
+    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:[NSURL URLWithString:BASEURL]];
     [httpClient setParameterEncoding:AFFormURLParameterEncoding];
     NSMutableURLRequest *request = [httpClient requestWithMethod:@"POST"
-                                                            path:@"http://localhost:8080/user/changeStatus"
+                                                            path:[NSString stringWithFormat:@"%@user/changeStatus",BASEURL]
                                                       parameters:params];
     
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request

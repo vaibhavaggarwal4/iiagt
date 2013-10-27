@@ -16,4 +16,7 @@
 @property(nonatomic,strong)NSNumber *hasWhatsapp;
 @property(nonatomic,strong)NSNumber *hasViber;
 @property(nonatomic,strong)NSString *availability;
+@property(nonatomic,strong)NSString *meetingStartTime;
+@property(nonatomic,strong)NSString *meetingEndTime;
+@property(nonatomic,strong)NSString *calendarSync;
 @end

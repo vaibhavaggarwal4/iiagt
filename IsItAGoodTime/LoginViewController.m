@@ -17,7 +17,9 @@
 SettingsViewController *settingsMessenger;
 @synthesize nameField;
 @synthesize numberField;
-
+@synthesize numberFormatLabel;
+UIBarButtonItem *nextButton ;
+UIBarButtonItem *previosButton;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -30,9 +32,54 @@ SettingsViewController *settingsMessenger;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
 	// Do any additional setup after loading the view.
+   // UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320,40)];
+    UIToolbar *toolBar = [[UIToolbar alloc]initWithFrame:CGRectMake(0, 0, 320, 40)];
+   /* [toolBar setBackgroundColor:[UIColor clearColor]];
+    [toolBar setOpaque:NO];
+    [toolBar setTranslucent:YES];*/
+    toolBar.barTintColor = [[UIColor clearColor] colorWithAlphaComponent:0.1];
+    nextButton = [[UIBarButtonItem alloc] initWithTitle:@"Next" style:UIBarButtonItemStyleBordered target:self action:@selector(pushNext)];
+    previosButton = [[UIBarButtonItem alloc] initWithTitle:@"Previous" style:UIBarButtonItemStyleBordered  target:self action:@selector(pushPrevious)];
+    NSArray *buttons = [[NSArray alloc]initWithObjects:previosButton, nextButton, nil];
+    [toolBar setItems:buttons];
+    [nameField setInputAccessoryView:toolBar];
+    [numberField setInputAccessoryView:toolBar];
+    nameField.returnKeyType=UIReturnKeyDone;
+    numberField.returnKeyType=UIReturnKeyDone;
 }
+-(BOOL) textFieldShouldReturn:(UITextField *)textField{
+    [textField resignFirstResponder];
+    numberFormatLabel.hidden=YES;
 
+    	return YES;
+}
+-(void)pushNext{
+    [numberField becomeFirstResponder];
+    previosButton.enabled=TRUE;
+
+    
+}
+-(void)pushPrevious{
+    [nameField becomeFirstResponder];
+    nextButton.enabled=TRUE;
+
+}
+- (void)textFieldDidBeginEditing:(UITextField *)textField{
+    if(textField==nameField){
+        previosButton.enabled=FALSE;
+        nextButton.enabled=TRUE;
+        numberFormatLabel.hidden=YES;
+        
+    }
+    else{
+        nextButton.enabled=FALSE;
+        previosButton.enabled=TRUE;
+        numberFormatLabel.hidden=NO;
+    }
+
+}
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -106,27 +153,75 @@ SettingsViewController *settingsMessenger;
     }
     if(numberField.isEditing){
         [numberField resignFirstResponder];
+        numberFormatLabel.hidden=YES;
+
     }
+    
+    //[numberField becomeFirstResponder];
 }
 - (IBAction)infoViewButton:(id)sender {
     
     self.infoView.hidden=false;
+    
+    [UIView animateWithDuration:0.4f
+                     animations:^{
+                         self.infoView.alpha = 1.0;
+                         // self.infoView.frame=CGRectMake(self.infoView.center.x, self.infoView.center.y, 0, 0);
+                         
+                     }
+     
+                     completion:^(BOOL finished){ //[self.infoView removeFromSuperview];
+                     }];
+
 }
 - (IBAction)loginButton:(id)sender {
     
     NSLog(@"%@",nameField.text);
     NSLog(@"%@",numberField.text);
-    settingsMessenger = [[SettingsViewController alloc]init];
-    [settingsMessenger dismissLoginViewController:self];
+    //settingsMessenger = [[SettingsViewController alloc]init];
+    //[settingsMessenger dismissLoginViewController:self];
 //[self dismissViewControllerAnimated:YES completion:nil];
   //  [self.presentingViewController.presentingViewController.tabBarController setSelectedIndex:1];
     [prefs setObject:nameField.text forKey:@"name"];
     [prefs synchronize];
+    
+    
+    // Sign Up/ Log the user in
+    // if server response is 200 and true, save all the information
+    // in the userdefaulsts ( number, name, unique hash, local time zone and all the likes)
+    // then perform the segue
+    // The problem with saving this in the app delegate is that you would have to set it every time and you dont want that
+    // save it in the NSUSERDEFAULTS instead
+    
+    appUserPhoneNumber=@"7019361484";
+    appUserUniqueHash=@"f8b02e92e32f62d878e3289e04044057";
+    [prefs setObject:appUserPhoneNumber forKey:@"appUserPhoneNumber"];
+    [prefs setObject:appUserUniqueHash forKey:@"appUserUniqueHash"];
+    [prefs synchronize];
+
+    [self performSegueWithIdentifier:@"moreInfoAfterLoginSegue" sender:self];
 
     
 }
 
+
+
+
+
 - (IBAction)infoViewCloseButton:(id)sender {
-    self.infoView.hidden=true;
+    
+
+    [UIView animateWithDuration:0.4f
+                         animations:^{
+                             self.infoView.alpha = 0.0;
+                            // self.infoView.frame=CGRectMake(self.infoView.center.x, self.infoView.center.y, 0, 0);
+                             
+                         }
+    
+                     completion:^(BOOL finished){
+                         self.infoView.hidden=true;
+                     }];
+
+
 }
 @end

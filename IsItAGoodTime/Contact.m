@@ -16,4 +16,7 @@
 @synthesize availability;
 @synthesize lastSynced;
 @synthesize localTime;
+@synthesize meetingStartTime;
+@synthesize meetingEndTime;
+@synthesize calendarSync;
 @end

@@ -9,6 +9,8 @@
 #import <UIKit/UIKit.h>
 #define BASEURL  @"http://localhost:8080/"
 NSUserDefaults *prefs;
+NSString *appUserPhoneNumber;
+NSString *appUserUniqueHash;
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 @property (strong, nonatomic) UIWindow *window;
 

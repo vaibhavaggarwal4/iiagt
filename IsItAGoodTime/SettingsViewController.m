@@ -13,6 +13,7 @@
 #import "ContactsCell.h"
 #import "SettingCell.h"
 #import "AppDelegate.h"
+#import "WelcomeViewController.h"
 @interface SettingsViewController ()
 @property(strong,nonatomic)NSMutableArray *userContacts;
 @property(strong,nonatomic)NSMutableArray *userContactNames;
@@ -39,6 +40,8 @@ ABAddressBookRef addressBook ;
     ABAddressBookRegisterExternalChangeCallback(addressBook,addressBookChanged,(__bridge void *)(self));
     [self determineAccessToAddressBookAndHandle];
 
+    [prefs removeObjectForKey:@"name"];
+    [prefs synchronize];
     
     
 }
@@ -49,7 +52,7 @@ ABAddressBookRef addressBook ;
     //[prefs removeObjectForKey:@"name"];
     //[prefs synchronize];
     if([prefs valueForKey:@"name"]){
-    
+
     }
     else{
         [self checkIfNewUserAndPresentLoginView];
@@ -62,18 +65,15 @@ ABAddressBookRef addressBook ;
     [loginViewController dismissViewControllerAnimated:YES completion:nil];
     
 }
--(void)change{
-    NSLog(@"%@",self);
-    
-}
+
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     // Return the number of sections.
-    return 1;
+    return 2;
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
     
-    return 40;
+    return 20;
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     return 50;
@@ -81,11 +81,15 @@ ABAddressBookRef addressBook ;
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
+    if(section==0){
+        return 1;
+    }
     return [optionList count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    
     static NSString *settingCellIdentifier = @"settingCell";
     SettingCell *settingCell = (SettingCell *)[tableView dequeueReusableCellWithIdentifier:settingCellIdentifier];
     if (settingCell == nil)
@@ -94,12 +98,26 @@ ABAddressBookRef addressBook ;
         NSArray *nib = [[NSBundle mainBundle] loadNibNamed:@"SettingCell" owner:self options:nil];
 		settingCell = [nib objectAtIndex:0];
     }
+    if(indexPath.section==0){
+        settingCell.optionLabel.transform=CGAffineTransformMakeTranslation(130, 10);
+        settingCell.optionLabel.text=@"Vaibhav Aggarwal";
+        settingCell.accessoryType=UITableViewCellAccessoryNone;
+        settingCell.userInteractionEnabled=NO;
+        return settingCell;
+    }
     // Configure the cell...
     settingCell.optionLabel.text=[optionList objectAtIndex:indexPath.row];
     return settingCell;
+    
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+
+    if(indexPath.section==0){
+        return;
+    }
+    
     switch (indexPath.row) {
         case 0:
             [self performSegueWithIdentifier:@"profileSettingSegue" sender:[tableView cellForRowAtIndexPath:indexPath]];
@@ -122,7 +140,6 @@ ABAddressBookRef addressBook ;
             break;
     }
     
-    [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
@@ -153,11 +170,18 @@ ABAddressBookRef addressBook ;
 
     UIStoryboard *storyboard = self.storyboard;
     
-    LoginViewController *svc = [storyboard instantiateViewControllerWithIdentifier:@"loginView"];
-    UINavigationController *loginNavigationController = [[UINavigationController alloc]
-                                                    initWithRootViewController:svc];
-    svc.navigationController.navigationBarHidden=true;
-    [self presentViewController:loginNavigationController animated:YES completion:nil];
+    WelcomeViewController *welcomeViewController = [storyboard instantiateViewControllerWithIdentifier:@"welcomeView"];
+    UINavigationController *welcomeNavigationController = [[UINavigationController alloc]
+                                                         initWithRootViewController:welcomeViewController];
+
+    welcomeViewController.navigationController.navigationBarHidden=true;
+    [self presentViewController:welcomeNavigationController animated:YES completion:nil];
+    
+   // LoginViewController *svc = [storyboard instantiateViewControllerWithIdentifier:@"loginView"];
+    //UINavigationController *loginNavigationController = [[UINavigationController alloc]
+                                                //    initWithRootViewController:svc];
+    //svc.navigationController.navigationBarHidden=true;
+    //[self presentViewController:loginNavigationController animated:YES completion:nil];
     
 }
 
@@ -264,14 +288,14 @@ void addressBookChanged(ABAddressBookRef reference, CFDictionaryRef dictionary, 
     //NSMutableArray *contacts = [[NSMutableArray alloc]initWithObjects:@"6507437883",@"6505678567",@"9047654987",@"609876453"
      //                           , nil];
     NSMutableDictionary *params = [[NSMutableDictionary alloc]init];
-    [params setValue:@"f8b02e92e32f62d878e3289e04044057" forKey:@"unique_hash"];
-    [params setValue:@"7019361484" forKey:@"phone_number"];
+    [params setValue:[prefs valueForKey:@"appUserUniqueHash"] forKey:@"unique_hash"];
+    [params setValue:[prefs valueForKey:@"appUserPhoneNumber"] forKey:@"phone_number"];
     [params setValue:contacts forKey:@"contacts"];
     
-    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:[NSURL URLWithString:@"http://localhost:8080/"]];
+    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:[NSURL URLWithString:BASEURL]];
     [httpClient setParameterEncoding:AFFormURLParameterEncoding];
     NSMutableURLRequest *request = [httpClient requestWithMethod:@"POST"
-                                                            path:@"http://localhost:8080/user/contacts"
+                                                            path:[NSString stringWithFormat:@"%@user/contacts",BASEURL]
                                                       parameters:params];
     
     
