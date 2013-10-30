@@ -8,22 +8,18 @@
 
 #import "SettingsViewController.h"
 #import <EventKit/EventKit.h>
-#import <AddressBook/AddressBook.h>
 #import "LoginViewController.h"
 #import "ContactsCell.h"
 #import "SettingCell.h"
 #import "AppDelegate.h"
 #import "WelcomeViewController.h"
 @interface SettingsViewController ()
-@property(strong,nonatomic)NSMutableArray *userContacts;
 @property(strong,nonatomic)NSMutableArray *userContactNames;
 @property(strong,nonatomic)NSArray *optionList;
 @end
 
 @implementation SettingsViewController
-@synthesize userContacts;
 bool loggedIn= false;
-ABAddressBookRef addressBook ;
 @synthesize optionList;
 @synthesize settingsTable;
 - (void)viewDidLoad
@@ -32,16 +28,11 @@ ABAddressBookRef addressBook ;
     prefs = [NSUserDefaults standardUserDefaults];
 	// Do any additional setup after loading the view, typically from a nib.
     optionList =[[NSArray alloc]initWithObjects:@"Profile",@"Font and Colors",@"Syncing preferences",@"About", nil];
-   // [self getCalendarData];
-    CFErrorRef error = NULL;
-    
-    addressBook = ABAddressBookCreateWithOptions(NULL, &error);
-    
-    ABAddressBookRegisterExternalChangeCallback(addressBook,addressBookChanged,(__bridge void *)(self));
-    [self determineAccessToAddressBookAndHandle];
+   [self getCalendarData];
 
     [prefs removeObjectForKey:@"appUserUniqueHash"];
     [prefs synchronize];
+    
     
     
 }
@@ -69,6 +60,7 @@ ABAddressBookRef addressBook ;
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     // Return the number of sections.
+    
     return 2;
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
@@ -190,32 +182,37 @@ ABAddressBookRef addressBook ;
     [store requestAccessToEntityType:EKEntityTypeEvent completion:^(BOOL granted, NSError *error) {
         if(granted){
             NSCalendar *calendar =[NSCalendar currentCalendar];
-            NSDateComponents *ondeDayAgaoComponents = [[NSDateComponents alloc]init];
-            ondeDayAgaoComponents.day = -1;
+            NSDateComponents *oneDayAgoComponents = [[NSDateComponents alloc]init];
+            oneDayAgoComponents.day = 0;
+        
+            NSDate *oneDayAgo = [calendar dateByAddingComponents:oneDayAgoComponents toDate:[NSDate date] options:0];
             
-            NSDate *oneDayAgo = [calendar dateByAddingComponents:ondeDayAgaoComponents toDate:[NSDate date] options:0];
+            NSDateComponents *twoDaysFromNowComponents = [[NSDateComponents alloc]init];
             
-            NSDateComponents *oneYearFromNowComponents = [[NSDateComponents alloc]init];
+            twoDaysFromNowComponents.day=+2;
+            NSDate *twoDaysFromNow =[calendar dateByAddingComponents:twoDaysFromNowComponents toDate:[NSDate date] options:0];
             
-            oneYearFromNowComponents.day=+1;
-            NSDate *oneYearFromNow =[calendar dateByAddingComponents:oneYearFromNowComponents toDate:[NSDate date] options:0];
-            
-            NSPredicate *predicate =[store predicateForEventsWithStartDate:oneDayAgo endDate:oneYearFromNow calendars:nil];
+            NSPredicate *predicate =[store predicateForEventsWithStartDate:oneDayAgo endDate:twoDaysFromNow calendars:nil];
             
             
             // eventsmatching predicate is synchronous, do not run this on the main thread
             // run this on a seperate background thread
            NSArray *cal = [store eventsMatchingPredicate:predicate];
-            
+            NSMutableArray *meetingStartTimes = [[NSMutableArray alloc]init];
+            NSMutableArray *meetingEndTimes = [[NSMutableArray alloc]init];
+            NSDate *date;
+            NSTimeInterval ti;
             for(NSObject *item in cal){
-                NSLog(@"%@",item);
+                date = [item valueForKey:@"startDate"];
+                ti =(double) [date timeIntervalSince1970];
+                [meetingStartTimes addObject:[NSString stringWithFormat:@"%ld",lroundf(ti)]];
+                date = [item valueForKey:@"endDate"];
+                ti =(double) [date timeIntervalSince1970];
+                [meetingEndTimes addObject:[NSString stringWithFormat:@"%ld",lroundf(ti)]];
+                
+
+
             }
-            NSLog(@"%@",[cal valueForKey:@"title"]);
-            NSLog(@"%@",[cal valueForKey:@"startDate"]);
-            NSLog(@"%@",[cal valueForKey:@"endDate"]);
-            NSLog(@"%@",[cal valueForKey:@"timeZone"]);
-
-
 
         }
         else{
@@ -224,65 +221,6 @@ ABAddressBookRef addressBook ;
     }];
     
 }
--(void) determineAccessToAddressBookAndHandle{
-    if(ABAddressBookGetAuthorizationStatus()==kABAuthorizationStatusNotDetermined){
-        ABAddressBookRequestAccessWithCompletion(addressBook, ^(bool granted,CFErrorRef accessError){
-            [self getAllContactsFromAddressBook];
-            
-            
-        });
-        
-    }
-    else if(ABAddressBookGetAuthorizationStatus() == kABAuthorizationStatusAuthorized){
-        [self getAllContactsFromAddressBook];
-        
-    }
-    else {
-        NSLog(@"You have blocked the access, go to settings to grant contact access");
-    }
-    
-}
-
--(void)getAllContactsFromAddressBook{
-    
-    
-    if(addressBook!=NULL){
-        NSLog(@"Opened contacts");
-        userContacts = [[NSMutableArray alloc]init];
-        NSArray *allContacts = (__bridge_transfer NSArray *)ABAddressBookCopyArrayOfAllPeople(addressBook);
-        NSLog(@"%lu",(unsigned long)[allContacts count]);
-        for(NSUInteger i=0;i<[allContacts count];i++){
-            
-            ABRecordRef contact = (__bridge ABRecordRef)allContacts[i];
-            NSString *firstName = (__bridge_transfer NSString *)ABRecordCopyValue(contact, kABPersonFirstNameProperty);
-            NSString *lastName = (__bridge_transfer NSString *)ABRecordCopyValue((contact), kABPersonLastNameProperty);
-            NSLog(@"%@,%@",lastName,firstName);
-            NSString *phoneNumber1 = (__bridge_transfer NSString *)ABRecordCopyValue(contact, kABPersonPhoneProperty);
-
-            for (CFIndex i = 0; i < ABMultiValueGetCount((__bridge ABMultiValueRef)(phoneNumber1)); i++) {
-                
-                
-                [userContacts addObject:(__bridge id)(ABMultiValueCopyValueAtIndex((__bridge ABMultiValueRef)(phoneNumber1), i))];
-                
-                
-            }
-            
-        
-        }
-        
-        NSLog(@"%@",userContacts);
-        
-    }else{
-        NSLog(@"cannot load contacts from phone");
-    }
-    
-}
-
-void addressBookChanged(ABAddressBookRef reference, CFDictionaryRef dictionary, void *context) {
-    NSLog(@"There was a change in the addressbook");
-
-}
-
 -(void) postContacts:(NSMutableArray *)contacts{
     
     //NSMutableArray *contacts = [[NSMutableArray alloc]initWithObjects:@"6507437883",@"6505678567",@"9047654987",@"609876453"

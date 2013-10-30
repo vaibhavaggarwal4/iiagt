@@ -57,6 +57,7 @@ bool isCalendarSyncOn=NO;
 UIView *headerView;
 NSInteger controlSelectedIndex;
 UIApplication *networkIndicator;
+NSArray *indices;
 - (id)initWithStyle:(UITableViewStyle)style
 {
     self = [super initWithStyle:style];
@@ -93,6 +94,7 @@ UIApplication *networkIndicator;
     self.tableView.bounds = newBounds;
     self.navigationItem.titleView=controlSegment;
     [self loadDataInBackgroundThread];
+    indices=[[NSArray alloc]initWithObjects:@"A",@"B",@"C",@"D", nil];
     
 
 }
@@ -170,6 +172,9 @@ UIApplication *networkIndicator;
         return [contactsArray count];
     }
     
+}
+- (NSInteger)tableView:(UITableView *)tableView sectionForSectionIndexTitle:(NSString *)title atIndex:(NSInteger)index {
+    return [indices indexOfObject:title];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -414,6 +419,7 @@ UIApplication *networkIndicator;
                                          
                                             success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
                                                 selfDataDictionary =(NSDictionary *) JSON;
+                                                NSLog(@"%@",selfDataDictionary);
                                                 NSString *calendarSync=[[[selfDataDictionary valueForKey:@"details"] valueForKey:@"calendar_sync"] objectAtIndex:0];
                                                 if([calendarSync isEqualToString:@"No"]){
                                                     isCalendarSyncOn=NO;

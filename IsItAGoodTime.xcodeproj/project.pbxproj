@@ -72,6 +72,8 @@
 		6DA9037617EBF59200728787 /* ContactsCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DA9037517EBF59200728787 /* ContactsCell.m */; };
 		6DA9037817EBF5B500728787 /* ContactsCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6DA9037717EBF5B500728787 /* ContactsCell.xib */; };
 		6DADA76518012D03001CAD03 /* SyncingPreferencesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DADA76418012D03001CAD03 /* SyncingPreferencesViewController.m */; };
+		6DBECA0F181F4876005CE0C6 /* AllContactsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DBECA0E181F4876005CE0C6 /* AllContactsTableViewController.m */; };
+		6DBECA12182087D8005CE0C6 /* CalendarEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DBECA11182087D8005CE0C6 /* CalendarEvent.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -167,6 +169,10 @@
 		6DA9037717EBF5B500728787 /* ContactsCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = ContactsCell.xib; path = ../ContactsCell.xib; sourceTree = "<group>"; };
 		6DADA76318012D03001CAD03 /* SyncingPreferencesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SyncingPreferencesViewController.h; sourceTree = "<group>"; };
 		6DADA76418012D03001CAD03 /* SyncingPreferencesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SyncingPreferencesViewController.m; sourceTree = "<group>"; };
+		6DBECA0D181F4876005CE0C6 /* AllContactsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AllContactsTableViewController.h; sourceTree = "<group>"; };
+		6DBECA0E181F4876005CE0C6 /* AllContactsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AllContactsTableViewController.m; sourceTree = "<group>"; };
+		6DBECA10182087D8005CE0C6 /* CalendarEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CalendarEvent.h; sourceTree = "<group>"; };
+		6DBECA11182087D8005CE0C6 /* CalendarEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CalendarEvent.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -267,6 +273,8 @@
 				6D83244217F8F60700369FD4 /* SettingCell.xib */,
 				6D71E1E017FE569C00D263A4 /* ProfileSettingsViewController.h */,
 				6D71E1E117FE569C00D263A4 /* ProfileSettingsViewController.m */,
+				6DBECA10182087D8005CE0C6 /* CalendarEvent.h */,
+				6DBECA11182087D8005CE0C6 /* CalendarEvent.m */,
 			);
 			name = Settings;
 			sourceTree = "<group>";
@@ -313,6 +321,8 @@
 				6DA9037717EBF5B500728787 /* ContactsCell.xib */,
 				6D7F42D11809136A00E3D22A /* Contact.h */,
 				6D7F42D21809136A00E3D22A /* Contact.m */,
+				6DBECA0D181F4876005CE0C6 /* AllContactsTableViewController.h */,
+				6DBECA0E181F4876005CE0C6 /* AllContactsTableViewController.m */,
 				6DA9037417EBF59200728787 /* ContactsCell.h */,
 				6DA9037517EBF59200728787 /* ContactsCell.m */,
 				6DA9034F17EBC69600728787 /* ContactsTableViewController.m */,
@@ -469,10 +479,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6DBECA12182087D8005CE0C6 /* CalendarEvent.m in Sources */,
 				6DA9036717EBC74300728787 /* AFImageRequestOperation.m in Sources */,
 				6D9F53ED17E94AED006B993F /* main.m in Sources */,
 				6D83244617F8F64D00369FD4 /* SettingCell.m in Sources */,
 				6D9F53F117E94AED006B993F /* AppDelegate.m in Sources */,
+				6DBECA0F181F4876005CE0C6 /* AllContactsTableViewController.m in Sources */,
 				6D7F42D31809136A00E3D22A /* Contact.m in Sources */,
 				6DA9036C17EBC74300728787 /* AFXMLRequestOperation.m in Sources */,
 				6DA9037617EBF59200728787 /* ContactsCell.m in Sources */,
