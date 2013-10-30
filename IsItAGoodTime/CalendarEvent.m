@@ -9,5 +9,6 @@
 #import "CalendarEvent.h"
 
 @implementation CalendarEvent
-
+@synthesize start_time;
+@synthesize end_time;
 @end

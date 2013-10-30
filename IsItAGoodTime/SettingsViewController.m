@@ -13,6 +13,7 @@
 #import "SettingCell.h"
 #import "AppDelegate.h"
 #import "WelcomeViewController.h"
+#import "CalendarEvent.h"
 @interface SettingsViewController ()
 @property(strong,nonatomic)NSMutableArray *userContactNames;
 @property(strong,nonatomic)NSArray *optionList;
@@ -198,21 +199,21 @@ bool loggedIn= false;
             // eventsmatching predicate is synchronous, do not run this on the main thread
             // run this on a seperate background thread
            NSArray *cal = [store eventsMatchingPredicate:predicate];
-            NSMutableArray *meetingStartTimes = [[NSMutableArray alloc]init];
-            NSMutableArray *meetingEndTimes = [[NSMutableArray alloc]init];
             NSDate *date;
             NSTimeInterval ti;
+            NSMutableArray *startTimes = [[NSMutableArray alloc]init];
+            NSMutableArray*endTimes = [[NSMutableArray alloc]init];
             for(NSObject *item in cal){
+
                 date = [item valueForKey:@"startDate"];
                 ti =(double) [date timeIntervalSince1970];
-                [meetingStartTimes addObject:[NSString stringWithFormat:@"%ld",lroundf(ti)]];
+                [startTimes addObject:[NSString stringWithFormat:@"%ld",lroundf(ti)]];
                 date = [item valueForKey:@"endDate"];
                 ti =(double) [date timeIntervalSince1970];
-                [meetingEndTimes addObject:[NSString stringWithFormat:@"%ld",lroundf(ti)]];
+                [endTimes addObject:[NSString stringWithFormat:@"%ld",lroundf(ti)]];
                 
-
-
             }
+            [self updateCalendarWithStart:startTimes AndEndTimes:endTimes];
 
         }
         else{
@@ -221,13 +222,57 @@ bool loggedIn= false;
     }];
     
 }
+-(void)updateCalendarWithStart:(NSMutableArray *)startTimes AndEndTimes:(NSMutableArray *)endTimes {
+    
+    
+    
+    NSMutableDictionary *params = [[NSMutableDictionary alloc]init];
+    //[params setValue:[prefs valueForKey:@"appUserUniqueHash"] forKey:@"unique_hash"];
+   // [params setValue:[prefs valueForKey:@"appUserPhoneNumber"] forKey:@"phone_number"];
+    NSLog(@"%@",[prefs valueForKey:@"appUserUniqueHash"]);
+    [params setValue:@"f8b02e92e32f62d878e3289e04044057" forKey:@"unique_hash"];
+    [params setValue:@"7019361484" forKey:@"phone_number"];
+
+    [params setValue:startTimes forKey:@"start_times"];
+    [params setValue:endTimes forKey:@"end_times"];
+
+
+    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:[NSURL URLWithString:BASEURL]];
+    [httpClient setParameterEncoding:AFFormURLParameterEncoding];
+    NSMutableURLRequest *request = [httpClient requestWithMethod:@"POST"
+                                                            path:[NSString stringWithFormat:@"%@user/calendar",BASEURL]
+                                                      parameters:params];
+    
+    AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request
+                                         
+                success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+                                                                                            
+                                                                                            
+                    }
+                                    
+        failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
+            // Message for the geeks
+        UIAlertView *failure = [[UIAlertView alloc] initWithTitle:@"Could not change status"
+        message:[NSString stringWithFormat:@"%@",error]
+        delegate:nil
+        cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [failure show];
+    }];
+    
+    [operation start];
+    
+}
+
+
 -(void) postContacts:(NSMutableArray *)contacts{
     
     //NSMutableArray *contacts = [[NSMutableArray alloc]initWithObjects:@"6507437883",@"6505678567",@"9047654987",@"609876453"
      //                           , nil];
     NSMutableDictionary *params = [[NSMutableDictionary alloc]init];
-    [params setValue:[prefs valueForKey:@"appUserUniqueHash"] forKey:@"unique_hash"];
-    [params setValue:[prefs valueForKey:@"appUserPhoneNumber"] forKey:@"phone_number"];
+    //[params setValue:[prefs valueForKey:@"appUserUniqueHash"] forKey:@"unique_hash"];
+    //[params setValue:[prefs valueForKey:@"appUserPhoneNumber"] forKey:@"phone_number"];
+    [params setValue:@"f8b02e92e32f62d878e3289e04044057" forKey:@"unique_hash"];
+    [params setValue:@"7019361484" forKey:@"phone_number"];
     [params setValue:contacts forKey:@"contacts"];
     
     AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:[NSURL URLWithString:BASEURL]];
@@ -259,24 +304,6 @@ bool loggedIn= false;
     
 }
 
-
-    
-    
-    
-    
-    
-    /*AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-    [httpClient registerHTTPOperationClass:[AFHTTPRequestOperation class]];
-    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        // Print the response body in text
-        NSLog(@"Response: %@", [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding]);
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"Error: %@", error);
-    }];
-    [operation start];
-    
-    
-}*/
 
 
 

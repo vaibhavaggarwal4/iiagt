@@ -9,5 +9,6 @@
 #import <Foundation/Foundation.h>
 
 @interface CalendarEvent : NSObject
-
+@property(strong,nonatomic)NSString *start_time;
+@property(strong,nonatomic)NSString *end_time;
 @end
