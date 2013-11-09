@@ -13,7 +13,6 @@
 #import "SettingCell.h"
 #import "AppDelegate.h"
 #import "WelcomeViewController.h"
-#import "CalendarEvent.h"
 @interface SettingsViewController ()
 @property(strong,nonatomic)NSMutableArray *userContactNames;
 @property(strong,nonatomic)NSArray *optionList;
@@ -29,10 +28,9 @@ bool loggedIn= false;
     prefs = [NSUserDefaults standardUserDefaults];
 	// Do any additional setup after loading the view, typically from a nib.
     optionList =[[NSArray alloc]initWithObjects:@"Profile",@"Font and Colors",@"Syncing preferences",@"About", nil];
-   [self getCalendarData];
 
-    [prefs removeObjectForKey:@"appUserUniqueHash"];
-    [prefs synchronize];
+   // [prefs removeObjectForKey:@"appUserUniqueHash"];
+    //[prefs synchronize];
     
     
     
@@ -178,90 +176,6 @@ bool loggedIn= false;
     
 }
 
--(void)getCalendarData{
-    EKEventStore *store = [[EKEventStore alloc]init];
-    [store requestAccessToEntityType:EKEntityTypeEvent completion:^(BOOL granted, NSError *error) {
-        if(granted){
-            NSCalendar *calendar =[NSCalendar currentCalendar];
-            NSDateComponents *oneDayAgoComponents = [[NSDateComponents alloc]init];
-            oneDayAgoComponents.day = 0;
-        
-            NSDate *oneDayAgo = [calendar dateByAddingComponents:oneDayAgoComponents toDate:[NSDate date] options:0];
-            
-            NSDateComponents *twoDaysFromNowComponents = [[NSDateComponents alloc]init];
-            
-            twoDaysFromNowComponents.day=+2;
-            NSDate *twoDaysFromNow =[calendar dateByAddingComponents:twoDaysFromNowComponents toDate:[NSDate date] options:0];
-            
-            NSPredicate *predicate =[store predicateForEventsWithStartDate:oneDayAgo endDate:twoDaysFromNow calendars:nil];
-            
-            
-            // eventsmatching predicate is synchronous, do not run this on the main thread
-            // run this on a seperate background thread
-           NSArray *cal = [store eventsMatchingPredicate:predicate];
-            NSDate *date;
-            NSTimeInterval ti;
-            NSMutableArray *startTimes = [[NSMutableArray alloc]init];
-            NSMutableArray*endTimes = [[NSMutableArray alloc]init];
-            for(NSObject *item in cal){
-
-                date = [item valueForKey:@"startDate"];
-                ti =(double) [date timeIntervalSince1970];
-                [startTimes addObject:[NSString stringWithFormat:@"%ld",lroundf(ti)]];
-                date = [item valueForKey:@"endDate"];
-                ti =(double) [date timeIntervalSince1970];
-                [endTimes addObject:[NSString stringWithFormat:@"%ld",lroundf(ti)]];
-                
-            }
-            [self updateCalendarWithStart:startTimes AndEndTimes:endTimes];
-
-        }
-        else{
-            NSLog(@"yaar!");
-        }
-    }];
-    
-}
--(void)updateCalendarWithStart:(NSMutableArray *)startTimes AndEndTimes:(NSMutableArray *)endTimes {
-    
-    
-    
-    NSMutableDictionary *params = [[NSMutableDictionary alloc]init];
-    //[params setValue:[prefs valueForKey:@"appUserUniqueHash"] forKey:@"unique_hash"];
-   // [params setValue:[prefs valueForKey:@"appUserPhoneNumber"] forKey:@"phone_number"];
-    NSLog(@"%@",[prefs valueForKey:@"appUserUniqueHash"]);
-    [params setValue:@"f8b02e92e32f62d878e3289e04044057" forKey:@"unique_hash"];
-    [params setValue:@"7019361484" forKey:@"phone_number"];
-
-    [params setValue:startTimes forKey:@"start_times"];
-    [params setValue:endTimes forKey:@"end_times"];
-
-
-    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:[NSURL URLWithString:BASEURL]];
-    [httpClient setParameterEncoding:AFFormURLParameterEncoding];
-    NSMutableURLRequest *request = [httpClient requestWithMethod:@"POST"
-                                                            path:[NSString stringWithFormat:@"%@user/calendar",BASEURL]
-                                                      parameters:params];
-    
-    AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request
-                                         
-                success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
-                                                                                            
-                                                                                            
-                    }
-                                    
-        failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
-            // Message for the geeks
-        UIAlertView *failure = [[UIAlertView alloc] initWithTitle:@"Could not change status"
-        message:[NSString stringWithFormat:@"%@",error]
-        delegate:nil
-        cancelButtonTitle:@"OK" otherButtonTitles:nil];
-        [failure show];
-    }];
-    
-    [operation start];
-    
-}
 
 
 -(void) postContacts:(NSMutableArray *)contacts{

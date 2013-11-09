@@ -189,8 +189,8 @@ UIBarButtonItem *previosButton;
     // The problem with saving this in the app delegate is that you would have to set it every time and you dont want that
     // save it in the NSUSERDEFAULTS instead
     
-    appUserPhoneNumber=@"7019361484";
-    appUserUniqueHash=@"f8b02e92e32f62d878e3289e04044057";
+   // appUserPhoneNumber=@"7019361484";
+    //appUserUniqueHash=@"f8b02e92e32f62d878e3289e04044057";
     [prefs setObject:appUserPhoneNumber forKey:@"appUserPhoneNumber"];
     [prefs setObject:appUserUniqueHash forKey:@"appUserUniqueHash"];
     [prefs synchronize];
@@ -206,14 +206,14 @@ UIBarButtonItem *previosButton;
     
    // [self signUpWithNumber:numberField.text];
     if([self isNamePresent] && [self isNumberTenDigits]){
-        //[self signUpWithNumber:numberField.text name:nameField.text];
+        [self signUpWithNumber:numberField.text name:nameField.text];
 
     }
     
     
     
     
-    [self performSegueWithIdentifier:@"moreInfoAfterLoginSegue" sender:self];
+   // [self performSegueWithIdentifier:@"moreInfoAfterLoginSegue" sender:self];
 
     
 }

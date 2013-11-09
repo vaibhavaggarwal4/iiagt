@@ -19,4 +19,6 @@
 @synthesize meetingStartTime;
 @synthesize meetingEndTime;
 @synthesize calendarSync;
+@synthesize callingHoursStartTime;
+@synthesize callingHoursEndTime;
 @end

@@ -19,4 +19,6 @@
 @property(nonatomic,strong)NSString *meetingStartTime;
 @property(nonatomic,strong)NSString *meetingEndTime;
 @property(nonatomic,strong)NSString *calendarSync;
+@property(nonatomic,strong)NSNumber *callingHoursStartTime;
+@property(nonatomic,strong)NSNumber *callingHoursEndTime;
 @end

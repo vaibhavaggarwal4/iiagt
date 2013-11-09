@@ -60,7 +60,9 @@ ABAddressBookRef addressBook ;
     // Return the number of rows in the section.
     return [userContacts count];
 }
-
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    return 80;
+}
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *contactCellIdentifier = @"contactCell";
@@ -75,6 +77,11 @@ ABAddressBookRef addressBook ;
     Contact *contact=[userContacts objectAtIndex:indexPath.row];
     contactCell.nameLabel.text=contact.name;
     return contactCell;
+
+}
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+       
 
 }
 

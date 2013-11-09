@@ -12,6 +12,8 @@
 		6D18E7B6181B73AA008866C8 /* CoreImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D18E7B5181B73AA008866C8 /* CoreImage.framework */; };
 		6D2739E817F28F2800D88904 /* EventKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D2739E617F28F2800D88904 /* EventKit.framework */; };
 		6D2739E917F28F2800D88904 /* EventKitUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D2739E717F28F2800D88904 /* EventKitUI.framework */; };
+		6D2DED1D1826B99D003E168C /* pickerViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6D2DED1C1826B99D003E168C /* pickerViewCell.xib */; };
+		6D2DED201826E3C6003E168C /* TimePickerCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D2DED1F1826E3C6003E168C /* TimePickerCell.m */; };
 		6D2E6645181CCF750032A988 /* circle.png in Resources */ = {isa = PBXBuildFile; fileRef = 6D2E6644181CCF750032A988 /* circle.png */; };
 		6D2E6663181CDCFE0032A988 /* available.png in Resources */ = {isa = PBXBuildFile; fileRef = 6D2E664A181CDCFE0032A988 /* available.png */; };
 		6D2E6664181CDCFE0032A988 /* busy.png in Resources */ = {isa = PBXBuildFile; fileRef = 6D2E664B181CDCFE0032A988 /* busy.png */; };
@@ -84,6 +86,9 @@
 		6D18E7B5181B73AA008866C8 /* CoreImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreImage.framework; path = System/Library/Frameworks/CoreImage.framework; sourceTree = SDKROOT; };
 		6D2739E617F28F2800D88904 /* EventKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EventKit.framework; path = System/Library/Frameworks/EventKit.framework; sourceTree = SDKROOT; };
 		6D2739E717F28F2800D88904 /* EventKitUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EventKitUI.framework; path = System/Library/Frameworks/EventKitUI.framework; sourceTree = SDKROOT; };
+		6D2DED1C1826B99D003E168C /* pickerViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = pickerViewCell.xib; sourceTree = "<group>"; };
+		6D2DED1E1826E3C6003E168C /* TimePickerCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimePickerCell.h; sourceTree = "<group>"; };
+		6D2DED1F1826E3C6003E168C /* TimePickerCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TimePickerCell.m; sourceTree = "<group>"; };
 		6D2E6644181CCF750032A988 /* circle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = circle.png; path = Resources/Images/circle.png; sourceTree = "<group>"; };
 		6D2E664A181CDCFE0032A988 /* available.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = available.png; sourceTree = "<group>"; };
 		6D2E664B181CDCFE0032A988 /* busy.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = busy.png; sourceTree = "<group>"; };
@@ -264,11 +269,14 @@
 		6D83244717F8FD9D00369FD4 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				6D2DED1C1826B99D003E168C /* pickerViewCell.xib */,
 				6D9F540217E94AED006B993F /* SettingsViewController.h */,
 				6D9F540317E94AED006B993F /* SettingsViewController.m */,
 				6DADA76318012D03001CAD03 /* SyncingPreferencesViewController.h */,
 				6DADA76418012D03001CAD03 /* SyncingPreferencesViewController.m */,
 				6D83244417F8F64D00369FD4 /* SettingCell.h */,
+				6D2DED1E1826E3C6003E168C /* TimePickerCell.h */,
+				6D2DED1F1826E3C6003E168C /* TimePickerCell.m */,
 				6D83244517F8F64D00369FD4 /* SettingCell.m */,
 				6D83244217F8F60700369FD4 /* SettingCell.xib */,
 				6D71E1E017FE569C00D263A4 /* ProfileSettingsViewController.h */,
@@ -436,6 +444,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6D2DED1D1826B99D003E168C /* pickerViewCell.xib in Resources */,
 				6D2E666D181CDCFE0032A988 /* 2.tiff in Resources */,
 				6D2E6671181CDCFE0032A988 /* 6.tiff in Resources */,
 				6D2E6677181CDCFE0032A988 /* 5.tiff in Resources */,
@@ -481,6 +490,7 @@
 			files = (
 				6DBECA12182087D8005CE0C6 /* CalendarEvent.m in Sources */,
 				6DA9036717EBC74300728787 /* AFImageRequestOperation.m in Sources */,
+				6D2DED201826E3C6003E168C /* TimePickerCell.m in Sources */,
 				6D9F53ED17E94AED006B993F /* main.m in Sources */,
 				6D83244617F8F64D00369FD4 /* SettingCell.m in Sources */,
 				6D9F53F117E94AED006B993F /* AppDelegate.m in Sources */,

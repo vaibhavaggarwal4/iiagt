@@ -9,7 +9,9 @@
 #import <UIKit/UIKit.h>
 
 @interface SyncingPreferencesViewController : UIViewController <UIPickerViewDataSource, UIPickerViewDelegate> 
-@property (weak, nonatomic) IBOutlet UIPickerView *startTimePicker;
-@property (weak, nonatomic) IBOutlet UIPickerView *endTimePicker;
+- (IBAction)calendarSync:(id)sender;
+@property (weak, nonatomic) IBOutlet UIView *infoView;
+@property (weak, nonatomic) IBOutlet UILabel *infoLabel;
 
+@property (weak, nonatomic) IBOutlet UITableView *optionsTable;
 @end
