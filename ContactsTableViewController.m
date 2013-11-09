@@ -16,14 +16,7 @@
 @interface ContactsTableViewController ()
 
 @property(strong,nonatomic)NSMutableArray *contactsArray;
-/*
-@property(strong,nonatomic)NSMutableArray *contactPhoneNumbers;
-@property(strong,nonatomic)NSMutableDictionary *contactsLastSyncedDictionary;
-@property(strong,nonatomic)NSMutableDictionary *contactsLocalTimeDictionary;
-@property(strong,nonatomic)NSMutableDictionary *contactNamesDictionary;
-@property(strong,nonatomic)NSMutableDictionary *contactHasViberDictionary;
-@property(strong,nonatomic)NSMutableDictionary *contactHasWhatsappDictionary;
-@property(strong,nonatomic)NSMutableDictionary *contactAvailabilityDictionary;*/
+
 @property(strong,nonatomic)UILabel *availabilityLabel;
 @property(strong,nonatomic)NSString *availabilityStatus;
 @property(strong,nonatomic)NSDictionary *selfDataDictionary;
@@ -31,18 +24,16 @@
 @property(strong,nonatomic)UISegmentedControl *controlSegment;
 @property(strong,nonatomic)NSMutableDictionary *availabilityResponse;
 @property(strong,nonatomic)NSMutableArray *filteredContacts;
+@property(strong,nonatomic)NSString *year;
+@property(strong,nonatomic)NSString *month;
+@property(strong,nonatomic)NSString *day;
+@property(strong,nonatomic)NSDateFormatter *formatterForCallingHours;
+@property(strong,nonatomic)NSNumber *currentUTCTime;
 @end
 
 @implementation ContactsTableViewController
-@synthesize serverResponse;
-//@synthesize contactNamesDictionary;
-//@synthesize contactPhoneNumbers;
-//@synthesize contactsLastSyncedDictionary;
-//@synthesize contactsLocalTimeDictionary;
-//@synthesize contactHasViberDictionary;
-//@synthesize contactHasWhatsappDictionary;
-//@synthesize contactAvailabilityDictionary;
 
+@synthesize serverResponse;
 @synthesize availabilityLabel;
 @synthesize availabilityStatus;
 @synthesize selfDataDictionary;
@@ -52,6 +43,11 @@
 @synthesize filteredContacts;
 @synthesize contactsArray;
 @synthesize searchBar;
+@synthesize year;
+@synthesize month;
+@synthesize day;
+@synthesize formatterForCallingHours;
+@synthesize currentUTCTime;
 bool available=true;
 bool isCalendarSyncOn=NO;
 UIView *headerView;
@@ -70,13 +66,7 @@ NSArray *indices;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    /*contactPhoneNumbers=[[NSMutableArray alloc]init];
-    contactNamesDictionary = [[NSMutableDictionary alloc]init];
-    contactsLocalTimeDictionary=[[NSMutableDictionary alloc]init];
-    contactsLastSyncedDictionary=[[NSMutableDictionary alloc]init];
-    contactHasViberDictionary = [[NSMutableDictionary alloc]init];
-    contactHasWhatsappDictionary = [[NSMutableDictionary alloc]init];
-    contactAvailabilityDictionary=[[NSMutableDictionary alloc]init];*/
+   
     contactsArray=[[NSMutableArray alloc]init];
     filteredContacts=[[NSMutableArray alloc]init];
     
@@ -95,11 +85,22 @@ NSArray *indices;
     self.navigationItem.titleView=controlSegment;
     [self loadDataInBackgroundThread];
     indices=[[NSArray alloc]initWithObjects:@"A",@"B",@"C",@"D", nil];
+    formatterForCallingHours = [[NSDateFormatter alloc]init];
+    [formatterForCallingHours setDateFormat:@"yyyy-MM-dd HH:mm"];
     
 
 }
 
+-(void)setYearMonthAndDay{
+    NSDate *date = [NSDate date];
+    NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier: NSGregorianCalendar];
+    NSDateComponents *components = [gregorian components: NSUIntegerMax fromDate: date];
+    year  = [NSString stringWithFormat:@"%d",[components year]];
+    month = [NSString stringWithFormat:@"%d",[components month]];
+    day   = [NSString stringWithFormat:@"%d",[components day]];
 
+
+}
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -207,30 +208,35 @@ NSArray *indices;
     
     if([contact.calendarSync isEqualToString:@"No"]){
     
-        if([contact.availability isEqualToString:@"Available"]){
-            contactCell.statusImage.image=[UIImage imageNamed:@"available.png"];
+            if([contact.availability isEqualToString:@"Available"]){
+                contactCell.statusImage.image=[UIImage imageNamed:@"available.png"];
+            }
+            else if([contact.availability isEqualToString:@"Busy"]){
+                //contactCell.availabilityLabel.textColor=[UIColor redColor];
+                contactCell.statusImage.image=[UIImage imageNamed:@"busy.png"];
+            }
+            else{
+                contactCell.statusImage.image=[UIImage imageNamed:@"car.png"];
+                //contactCell.availabilityLabel.textColor=[UIColor redColor];
+            }
             
-        }
-        else if([contact.availability isEqualToString:@"Busy"]){
-            //contactCell.availabilityLabel.textColor=[UIColor redColor];
-            contactCell.statusImage.image=[UIImage imageNamed:@"busy.png"];
-            
-        }
-        else{
-            contactCell.statusImage.image=[UIImage imageNamed:@"car.png"];
-            //contactCell.availabilityLabel.textColor=[UIColor redColor];
-            
-        }
-        
     }else{
-        if(![contact.meetingStartTime isKindOfClass:[NSNull class]]){
-            contactCell.statusImage.image=[UIImage imageNamed:@"busy.png"];
+        
+            if(![contact.meetingStartTime isKindOfClass:[NSNull class]]){
+                contactCell.statusImage.image=[UIImage imageNamed:@"busy.png"];
 
-        }
-        else{
-            contactCell.statusImage.image=[UIImage imageNamed:@"available.png"];
+            }
+            else{
+                if([contact.callingHoursStartTime integerValue]<[currentUTCTime integerValue] && [contact.callingHoursEndTime integerValue]>[currentUTCTime integerValue]){
+                    contactCell.statusImage.image=[UIImage imageNamed:@"available.png"];
 
-        }
+                }
+                else{
+                    contactCell.statusImage.image=[UIImage imageNamed:@"busy.png"];
+
+                }
+
+            }
     }
     /*else {
     
@@ -293,12 +299,6 @@ NSArray *indices;
         destinationViewController.passedPhoneNumber=contact.number;
         destinationViewController.hasWhatsapp = contact.hasWhatsapp;
         destinationViewController.hasViber = contact.hasViber;
-        
-        /*NSString *number = [contactPhoneNumbers objectAtIndex:path.row];
-        destinationViewController.passedName=[contactNamesDictionary valueForKey:number];
-        destinationViewController.passedPhoneNumber=number;
-        destinationViewController.hasWhatsapp=[contactHasWhatsappDictionary valueForKey:number];
-        destinationViewController.hasViber=[contactHasViberDictionary valueForKey:number];*/
         
         
     }
@@ -387,20 +387,20 @@ NSArray *indices;
     networkIndicator.networkActivityIndicatorVisible=YES;
     
     dispatch_queue_t loadDataQueue = dispatch_queue_create("dataLoadingQueue", NULL);
-   [self.refreshControl beginRefreshing];
-    dispatch_async(loadDataQueue, ^{
-        [self loadData];
+    [self.refreshControl beginRefreshing];
+        dispatch_async(loadDataQueue, ^{
+            [self loadData];
 
-        [self loadSelfStatus];
+            [self loadSelfStatus];
         
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self.refreshControl endRefreshing];
-            networkIndicator.networkActivityIndicatorVisible=NO;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.refreshControl endRefreshing];
+                networkIndicator.networkActivityIndicatorVisible=NO;
             
+            });
+        
+        
         });
-        
-        
-    });
    
 
 }
@@ -417,34 +417,35 @@ NSArray *indices;
                                                       parameters:params];
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request
                                          
-                                            success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
-                                                selfDataDictionary =(NSDictionary *) JSON;
-                                                NSLog(@"%@",selfDataDictionary);
-                                                NSString *calendarSync=[[[selfDataDictionary valueForKey:@"details"] valueForKey:@"calendar_sync"] objectAtIndex:0];
-                                                if([calendarSync isEqualToString:@"No"]){
-                                                    isCalendarSyncOn=NO;
-                                                availabilityStatus=[[[selfDataDictionary valueForKey:@"details"] valueForKey:@"user_set_busy"] objectAtIndex:0];
-                                                }
-                                                    else{
-                                                        isCalendarSyncOn=YES;
-                                                        if([[[[selfDataDictionary valueForKey:@"details"] valueForKey:@"start_time"] objectAtIndex:0] isKindOfClass:[NSNull class]]){
-                                                            availabilityStatus=@"Available";                                                        }
-                                                        else{
-                                                        availabilityStatus=@"Busy";
-                                                        }
-                                                    
-                                                        [self.tableView reloadData];
+                success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+                            selfDataDictionary =(NSDictionary *) JSON;
+                            currentUTCTime= [selfDataDictionary valueForKey:@"currentTime"];
 
+                            NSString *calendarSync=[[[selfDataDictionary valueForKey:@"details"] valueForKey:@"calendar_sync"] objectAtIndex:0];
+                            if([calendarSync isEqualToString:@"No"]){
+                                isCalendarSyncOn=NO;
+                                 availabilityStatus=[[[selfDataDictionary valueForKey:@"details"] valueForKey:@"user_set_busy"] objectAtIndex:0];
+                                }
+                            else{
+                                    isCalendarSyncOn=YES;
+                                    if([[[[selfDataDictionary valueForKey:@"details"] valueForKey:@"start_time"] objectAtIndex:0] isKindOfClass:[NSNull class]]){
+                                                            availabilityStatus=@"Available";
+                                    }
+                                    else{
+                                            availabilityStatus=@"Busy";
+                                        }
                                                     
-                                                    }
-                                                }
+                                        [self.tableView reloadData];
+
+                                
+                                }
+                }
                                         
-                                failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
-                                                    UIAlertView *failure = [[UIAlertView alloc] initWithTitle:@"Error Retrieving Profile Data"
-                                                    message:[NSString stringWithFormat:@"%@",error]
-                                                    delegate:nil
-                                                    cancelButtonTitle:@"OK" otherButtonTitles:nil];
-                                                    [failure show];
+                failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {                                                      UIAlertView *failure = [[UIAlertView alloc] initWithTitle:@"Error Retrieving Profile Data"
+                            message:[NSString stringWithFormat:@"%@",error]
+                                    delegate:nil
+                                    cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                                    [failure show];
                     }];
     
     [operation start];
@@ -453,7 +454,7 @@ NSArray *indices;
 
 
 -(void)loadData {
-    
+    [self setYearMonthAndDay];
     NSMutableDictionary *params = [[NSMutableDictionary alloc]init];
     [params setValue:[prefs valueForKey:@"appUserUniqueHash"] forKey:@"unique_hash"];
     [params setValue:[prefs valueForKey:@"appUserPhoneNumber"] forKey:@"phone_number"];
@@ -466,7 +467,6 @@ NSArray *indices;
                     success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
                     // check for status true or not
                         serverResponse =(NSDictionary *) JSON;
-                    
                         [self arrangeDataToDisplay:serverResponse];
                        //[self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationAutomatic];
                         [self.tableView reloadData];
@@ -632,20 +632,10 @@ NSArray *indices;
         if([appContact.calendarSync isEqualToString:@"Yes"]){
             appContact.meetingStartTime=[contact valueForKey:@"start_time"];
             appContact.meetingEndTime=[contact valueForKey:@"end_time"];
+            appContact.callingHoursStartTime=[self giveTimeStampFromHours:[contact valueForKey:@"calling_hours_start_time"] timeZone:[contact valueForKeyPath:@"user_local_time"]];
+            appContact.callingHoursEndTime=[self giveTimeStampFromHours:[contact valueForKey:@"calling_hours_end_time"] timeZone:[contact valueForKeyPath:@"user_local_time"]];
         }
         [self.contactsArray addObject:appContact];
-        
-        
-       // NSString *number = [contact valueForKey:@"user_phone_number"];
-        //[self.contactPhoneNumbers addObject:number];
-        //[self.contactNamesDictionary setObject:[contact valueForKeyPath:@"user_name"] forKey:number];
-        //[cNames addObject:[contact valueForKeyPath:@"user_name"]];
-       // [self.contactsLocalTimeDictionary setObject:[self giveTimeForTimeZone:[contact valueForKeyPath:@"user_local_time"] withFormatter:formatter andTime:now] forKey:number];
-        
-       // [self.contactsLastSyncedDictionary setObject:[self getDateFromTimeStamp:[contact valueForKeyPath:@"last_synced"]] forKey:number];
-       // [self.contactHasViberDictionary setObject:[contact valueForKeyPath:@"has_viber"] forKey:number];
-      //  [self.contactHasWhatsappDictionary setObject:[contact valueForKeyPath:@"has_whatsapp"] forKey:number];
-       // [self.contactAvailabilityDictionary setObject:[contact valueForKeyPath:@"user_set_busy"] forKey:number];
         
     }
     if([contactsArray count]<1){
@@ -683,6 +673,15 @@ NSArray *indices;
     
 }
 
+-(NSNumber *)giveTimeStampFromHours:(NSString *)hours timeZone:(NSString *)timeZone
+{
+   
+    [formatterForCallingHours setTimeZone:[NSTimeZone timeZoneWithName:timeZone]];
+    NSDate *date =  [formatterForCallingHours dateFromString:[NSString stringWithFormat:@"%@-%@-%@ %@",year,month,day,hours]];
+    
+    return [NSNumber numberWithLong:[date timeIntervalSince1970]];
+    //return [NSString stringWithFormat:@"%f",[date timeIntervalSince1970]];
+}
 
 
 @end
