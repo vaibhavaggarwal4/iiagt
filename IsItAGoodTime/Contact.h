@@ -21,4 +21,5 @@
 @property(nonatomic,strong)NSString *calendarSync;
 @property(nonatomic,strong)NSNumber *callingHoursStartTime;
 @property(nonatomic,strong)NSNumber *callingHoursEndTime;
+@property(nonatomic,strong)NSNumber *skyColor;
 @end

@@ -23,6 +23,12 @@
 @synthesize hasWhatsapp;
 @synthesize whatsappButtonOutlet;
 @synthesize viberButtonOutlet;
+@synthesize passedAvailabilityStatus;
+@synthesize passedCurrentTime;
+@synthesize passedLastSynced;
+@synthesize availabilityStatusLabel;
+@synthesize lastSyncedLabel;
+@synthesize currentTimeLabel;
 MessageControllerViewController *messenger;
 NSString *trueVal = @"1";
 - (void)viewDidLoad
@@ -33,6 +39,9 @@ NSString *trueVal = @"1";
 -(void)viewWillAppear:(BOOL)animated{
     nameLabel.text = passedName;
     phoneNumberLabel.text= passedPhoneNumber;
+    availabilityStatusLabel.text=passedAvailabilityStatus;
+    lastSyncedLabel.text=passedLastSynced;
+    currentTimeLabel.text=passedCurrentTime;
     [self.view bringSubviewToFront:contactImage];
     
     if([hasViber intValue]==1){

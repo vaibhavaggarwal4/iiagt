@@ -14,4 +14,5 @@
 @property (weak, nonatomic) IBOutlet UILabel *infoLabel;
 
 @property (weak, nonatomic) IBOutlet UITableView *optionsTable;
+- (IBAction)changeCallingHoursButton:(id)sender;
 @end

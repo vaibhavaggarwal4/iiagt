@@ -21,4 +21,5 @@
 @synthesize calendarSync;
 @synthesize callingHoursStartTime;
 @synthesize callingHoursEndTime;
+@synthesize skyColor;
 @end

@@ -29,8 +29,8 @@ bool loggedIn= false;
 	// Do any additional setup after loading the view, typically from a nib.
     optionList =[[NSArray alloc]initWithObjects:@"Profile",@"Font and Colors",@"Syncing preferences",@"About", nil];
 
-   // [prefs removeObjectForKey:@"appUserUniqueHash"];
-    //[prefs synchronize];
+    [prefs removeObjectForKey:@"appUserUniqueHash"];
+    [prefs synchronize];
     
     
     

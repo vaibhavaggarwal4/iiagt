@@ -54,7 +54,7 @@ bool isSelected=FALSE;
 	// Do any additional setup after loading the view.
     
     
-    hours=[[NSArray alloc]initWithObjects:@"1",@"2",@"3",@"4",@"5",@"6",@"7",@"8",@"9",@"10",@"11",@"12", nil];
+    hours=[[NSArray alloc]initWithObjects:@"00",@"01",@"02",@"03",@"04",@"05",@"06",@"07",@"08",@"09",@"10",@"11",@"12",@"13",@"14",@"15",@"16",@"17",@"18",@"19",@"20",@"21",@"22",@"23",@"23", nil];
     minutes=[[NSArray alloc]initWithObjects:@"00",@"05",@"10",@"15",@"20",@"25",@"30",@"35",@"40",@"45",@"50",@"55", nil];
     amOrPm=[[NSArray alloc]initWithObjects:@"AM",@"PM", nil];
     options=[[NSArray alloc]initWithObjects:@"Start Time",@"",@"End Time",@"",nil];
@@ -67,13 +67,12 @@ bool isSelected=FALSE;
 
 -(void)viewDidAppear:(BOOL)animated
 {
-    [startTimePicker selectRow:7 inComponent:0 animated:NO];
-    [endTimePicker selectRow:5 inComponent:0 animated:NO];
-    [endTimePicker selectRow:1 inComponent:2 animated:NO];
-    startTime=[NSString stringWithFormat:@"%@ : %@ %@",[hours objectAtIndex:[startTimePicker selectedRowInComponent:0]],
-               [minutes objectAtIndex:[startTimePicker selectedRowInComponent:1]],[amOrPm objectAtIndex:[startTimePicker selectedRowInComponent:2]]];
-    endTime=[NSString stringWithFormat:@"%@ : %@ %@",[hours objectAtIndex:[endTimePicker selectedRowInComponent:0]],
-             [minutes objectAtIndex:[endTimePicker selectedRowInComponent:1]],[amOrPm objectAtIndex:[endTimePicker selectedRowInComponent:2]]];
+    [startTimePicker selectRow:8 inComponent:0 animated:NO];
+    [endTimePicker selectRow:18 inComponent:0 animated:NO];
+    startTime=[NSString stringWithFormat:@"%@:%@",[hours objectAtIndex:[startTimePicker selectedRowInComponent:0]],
+               [minutes objectAtIndex:[startTimePicker selectedRowInComponent:1]]];
+    endTime=[NSString stringWithFormat:@"%@:%@",[hours objectAtIndex:[endTimePicker selectedRowInComponent:0]],
+             [minutes objectAtIndex:[endTimePicker selectedRowInComponent:1]]];
     [self.optionsTable reloadData];
 }
 
@@ -157,9 +156,12 @@ bool isSelected=FALSE;
 
         }
         if(indexPath.row==1){
-            startTimePicker.frame=CGRectMake(70, 0, 182, 162);
-            startTimePicker.delegate=self;
-            [timePickerCell addSubview:startTimePicker];
+            
+            
+                startTimePicker.frame=CGRectMake(70, 0, 182, 162);
+                startTimePicker.delegate=self;
+                [timePickerCell addSubview:startTimePicker];
+            
             
         }
         else if(indexPath.row==3){
@@ -202,8 +204,7 @@ bool isSelected=FALSE;
 
 - (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
 {
-   // If we want to do something else
-    return 3;
+    return 2;
 }
 
 - (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component
@@ -211,15 +212,10 @@ bool isSelected=FALSE;
     if(component==0){
     return [hours count];
     }
-    else if(component==1){
+    else{
         return [minutes count];
     }
-    else if(component==2){
-        return 2;
-    }
-    else{
-        return 0;
-    }
+    
 }
 
 - (CGFloat)pickerView:(UIPickerView *)pickerView rowHeightForComponent:(NSInteger)component
@@ -234,9 +230,6 @@ bool isSelected=FALSE;
     else if(component==1){
         return [minutes objectAtIndex:row];
     }
-    else if(component==2){
-        return [amOrPm objectAtIndex:row];
-    }
     else{
         return Nil;
     }
@@ -246,12 +239,12 @@ bool isSelected=FALSE;
     
     
     if(pickerView==startTimePicker){
-        startTime=[NSString stringWithFormat:@"%@ : %@ %@",[hours objectAtIndex:[startTimePicker selectedRowInComponent:0]],
-                [minutes objectAtIndex:[startTimePicker selectedRowInComponent:1]],[amOrPm objectAtIndex:[startTimePicker selectedRowInComponent:2]]];
+        startTime=[NSString stringWithFormat:@"%@:%@",[hours objectAtIndex:[startTimePicker selectedRowInComponent:0]],
+                [minutes objectAtIndex:[startTimePicker selectedRowInComponent:1]]];
     }
     if(pickerView==endTimePicker){
-        endTime=[NSString stringWithFormat:@"%@ : %@ %@",[hours objectAtIndex:[endTimePicker selectedRowInComponent:0]],
-                   [minutes objectAtIndex:[endTimePicker selectedRowInComponent:1]],[amOrPm objectAtIndex:[endTimePicker selectedRowInComponent:2]]];
+        endTime=[NSString stringWithFormat:@"%@:%@",[hours objectAtIndex:[endTimePicker selectedRowInComponent:0]],
+                   [minutes objectAtIndex:[endTimePicker selectedRowInComponent:1]]];
     }
     [self.optionsTable reloadData];
     
@@ -380,4 +373,47 @@ bool isSelected=FALSE;
     
 }
 
+- (IBAction)changeCallingHoursButton:(id)sender {
+    if([startTimePicker selectedRowInComponent:0]>[endTimePicker selectedRowInComponent:0]){
+        UIAlertView *failure = [[UIAlertView alloc] initWithTitle:@"Cmon!"
+                                                          message:[NSString stringWithFormat:@"End time has to be greater that start time"]
+                                                         delegate:nil
+                                                cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [failure show];
+        return;
+        
+    }
+    // Handle case for start time equal to end time
+    NSMutableDictionary *params = [[NSMutableDictionary alloc]init];
+    [params setValue:[prefs valueForKey:@"appUserUniqueHash"] forKey:@"unique_hash"];
+    [params setValue:[prefs valueForKey:@"appUserPhoneNumber"] forKey:@"phone_number"];
+    [params setValue:startTime forKey:@"start_time"];
+    [params setValue:endTime forKey:@"end_time"];
+    
+    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:[NSURL URLWithString:BASEURL]];
+    [httpClient setParameterEncoding:AFFormURLParameterEncoding];
+    NSMutableURLRequest *request = [httpClient requestWithMethod:@"POST"
+                                                            path:[NSString stringWithFormat:@"%@user/changeCallingHours",BASEURL]
+                                                      parameters:params];
+    
+    AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request
+                                         
+                                                                                        success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+                                                                                            NSLog(@"%@",JSON);
+                                                                                            
+                                                                                        }
+                                         
+                                                                                        failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
+                                                                                            // Message for the geeks
+                                                                                            UIAlertView *failure = [[UIAlertView alloc] initWithTitle:@"Could not change status"
+                                                                                                                                              message:[NSString stringWithFormat:@"%@",error]
+                                                                                                                                             delegate:nil
+                                                                                                                                    cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                                                                                            [failure show];
+                                                                                        }];
+    
+    [operation start];
+    
+
+}
 @end
