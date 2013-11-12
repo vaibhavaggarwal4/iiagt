@@ -24,9 +24,6 @@
 @property(strong,nonatomic)UISegmentedControl *controlSegment;
 @property(strong,nonatomic)NSMutableDictionary *availabilityResponse;
 @property(strong,nonatomic)NSMutableArray *filteredContacts;
-@property(strong,nonatomic)NSString *year;
-@property(strong,nonatomic)NSString *month;
-@property(strong,nonatomic)NSString *day;
 @property(strong,nonatomic)NSDateFormatter *formatterForCallingHours;
 @property(strong,nonatomic)NSNumber *currentUTCTime;
 @end
@@ -43,9 +40,6 @@
 @synthesize filteredContacts;
 @synthesize contactsArray;
 @synthesize searchBar;
-@synthesize year;
-@synthesize month;
-@synthesize day;
 @synthesize formatterForCallingHours;
 @synthesize currentUTCTime;
 bool available=true;
@@ -54,6 +48,7 @@ UIView *headerView;
 NSInteger controlSelectedIndex;
 UIApplication *networkIndicator;
 NSArray *indices;
+NSDate *today;
 - (id)initWithStyle:(UITableViewStyle)style
 {
     self = [super initWithStyle:style];
@@ -87,20 +82,9 @@ NSArray *indices;
     indices=[[NSArray alloc]initWithObjects:@"A",@"B",@"C",@"D", nil];
     formatterForCallingHours = [[NSDateFormatter alloc]init];
     [formatterForCallingHours setDateFormat:@"yyyy-MM-dd HH:mm"];
-    
 
 }
 
--(void)setYearMonthAndDay{
-    NSDate *date = [NSDate date];
-    NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier: NSGregorianCalendar];
-    NSDateComponents *components = [gregorian components: NSUIntegerMax fromDate: date];
-    year  = [NSString stringWithFormat:@"%d",[components year]];
-    month = [NSString stringWithFormat:@"%d",[components month]];
-    day   = [NSString stringWithFormat:@"%d",[components day]];
-
-
-}
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -205,8 +189,7 @@ NSArray *indices;
         contactCell.nameLabel.text = contact.name;
         contactCell.timeZoneLabel.text=contact.localTime;
         contactCell.lastSyncedLabel.text=contact.lastSynced;
-    
-    if([contact.calendarSync isEqualToString:@"No"]){
+        if([contact.calendarSync isEqualToString:@"No"]){
     
             if([contact.availability isEqualToString:@"Available"]){
                 contactCell.statusImage.image=[UIImage imageNamed:@"available.png"];
@@ -297,6 +280,9 @@ NSArray *indices;
         
         destinationViewController.passedName = contact.name;
         destinationViewController.passedPhoneNumber=contact.number;
+        destinationViewController.passedAvailabilityStatus=contact.availability;
+        destinationViewController.passedCurrentTime=contact.localTime;
+        destinationViewController.passedLastSynced=contact.lastSynced;
         destinationViewController.hasWhatsapp = contact.hasWhatsapp;
         destinationViewController.hasViber = contact.hasViber;
         
@@ -383,6 +369,7 @@ NSArray *indices;
     
     if(contactsArray.count>0){
         [contactsArray removeAllObjects];
+    
     }
     networkIndicator.networkActivityIndicatorVisible=YES;
     
@@ -391,7 +378,7 @@ NSArray *indices;
         dispatch_async(loadDataQueue, ^{
             [self loadData];
 
-            [self loadSelfStatus];
+           // [self loadSelfStatus];
         
             dispatch_async(dispatch_get_main_queue(), ^{
                 [self.refreshControl endRefreshing];
@@ -407,6 +394,9 @@ NSArray *indices;
 
 
 -(void)loadSelfStatus{
+    
+    today = [NSDate date];
+
     NSMutableDictionary *params = [[NSMutableDictionary alloc]init];
     [params setValue:[prefs valueForKey:@"appUserUniqueHash"] forKey:@"unique_hash"];
     [params setValue:[prefs valueForKey:@"appUserPhoneNumber"] forKey:@"phone_number"];
@@ -420,6 +410,7 @@ NSArray *indices;
                 success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
                             selfDataDictionary =(NSDictionary *) JSON;
                             currentUTCTime= [selfDataDictionary valueForKey:@"currentTime"];
+                            //[self setYearMonthAndDayWithUTC:[currentUTCTime doubleValue]];
 
                             NSString *calendarSync=[[[selfDataDictionary valueForKey:@"details"] valueForKey:@"calendar_sync"] objectAtIndex:0];
                             if([calendarSync isEqualToString:@"No"]){
@@ -427,13 +418,28 @@ NSArray *indices;
                                  availabilityStatus=[[[selfDataDictionary valueForKey:@"details"] valueForKey:@"user_set_busy"] objectAtIndex:0];
                                 }
                             else{
+                                // do the comparison with current UTC timestamp in same way as before
+                                NSNumber *selfCallingHourStartTime = [self giveTimeStampFromHours:[[[selfDataDictionary valueForKey:@"details"] valueForKey:@"calling_hours_start_time"]objectAtIndex:0] timeZone:[[[selfDataDictionary valueForKey:@"details"] valueForKey:@"user_local_time"]objectAtIndex:0] ];
+                                 NSNumber *selfCallingHourEndTime = [self giveTimeStampFromHours:[[[selfDataDictionary valueForKey:@"details"] valueForKey:@"calling_hours_end_time"]objectAtIndex:0] timeZone:[[[selfDataDictionary valueForKey:@"details"] valueForKey:@"user_local_time"]objectAtIndex:0] ];
+                                
                                     isCalendarSyncOn=YES;
-                                    if([[[[selfDataDictionary valueForKey:@"details"] valueForKey:@"start_time"] objectAtIndex:0] isKindOfClass:[NSNull class]]){
-                                                            availabilityStatus=@"Available";
+                                    if(![[[[selfDataDictionary valueForKey:@"details"] valueForKey:@"start_time"] objectAtIndex:0] isKindOfClass:[NSNull class]]){
+                                        
+                                        availabilityStatus=@"Busy";
                                     }
-                                    else{
-                                            availabilityStatus=@"Busy";
+                                    else
+                                    {
+                                        if([selfCallingHourStartTime integerValue]<[currentUTCTime integerValue] && [selfCallingHourEndTime integerValue]>[currentUTCTime integerValue]){
+                                            availabilityStatus=@"Available";
+
                                         }
+                                        else{
+                                            availabilityStatus=@"Busy";
+
+                                        }
+
+                                        
+                                    }
                                                     
                                         [self.tableView reloadData];
 
@@ -454,7 +460,6 @@ NSArray *indices;
 
 
 -(void)loadData {
-    [self setYearMonthAndDay];
     NSMutableDictionary *params = [[NSMutableDictionary alloc]init];
     [params setValue:[prefs valueForKey:@"appUserUniqueHash"] forKey:@"unique_hash"];
     [params setValue:[prefs valueForKey:@"appUserPhoneNumber"] forKey:@"phone_number"];
@@ -469,7 +474,8 @@ NSArray *indices;
                         serverResponse =(NSDictionary *) JSON;
                         [self arrangeDataToDisplay:serverResponse];
                        //[self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationAutomatic];
-                        [self.tableView reloadData];
+                       // [self.tableView reloadData];
+                        [self loadSelfStatus];
                     }
                                           
                     failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
@@ -623,8 +629,8 @@ NSArray *indices;
         appContact.number = [contact valueForKey:@"user_phone_number"];
         appContact.name = [contact valueForKeyPath:@"user_name"];
         appContact.lastSynced = [self getDateFromTimeStamp:[contact valueForKeyPath:@"last_synced"]];
-        appContact.localTime =[self giveTimeForTimeZone:[contact valueForKeyPath:@"user_local_time"] withFormatter:formatter andTime:now];
-        
+        appContact.localTime =[self giveTimeForTimeZone:[contact valueForKeyPath:@"user_local_time"] withFormatter:formatter andDate:now];
+       // appContact.skyColor=[NSNumber numberWithInt:[self giveHourforDate:now]];
         appContact.hasWhatsapp= [contact valueForKeyPath:@"has_whatsapp"];
         appContact.hasViber = [contact valueForKeyPath:@"has_viber"];
         appContact.availability = [contact valueForKeyPath:@"user_set_busy"];
@@ -648,13 +654,23 @@ NSArray *indices;
 
     
     }
+    [self.tableView reloadData];
     
     
 
 }
--(NSString *)giveTimeForTimeZone:(NSString *)timeZone withFormatter:(NSDateFormatter *)dateFormatter andTime:(NSDate *)date
+
+-(int)giveHourforDate:(NSDate *)date{
+    
+    NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier: NSGregorianCalendar];
+    NSDateComponents *components = [gregorian components: NSUIntegerMax fromDate: date];
+    return [components hour];
+}
+-(NSString *)giveTimeForTimeZone:(NSString *)timeZone withFormatter:(NSDateFormatter *)dateFormatter andDate:(NSDate *)date
 {
     [dateFormatter setTimeZone:[NSTimeZone timeZoneWithName:timeZone]];
+   
+
     return [dateFormatter stringFromDate:date];
 }
 - (NSString *) getDateFromTimeStamp:(NSString *)timeStamp
@@ -675,8 +691,17 @@ NSArray *indices;
 
 -(NSNumber *)giveTimeStampFromHours:(NSString *)hours timeZone:(NSString *)timeZone
 {
-   
+    if(!today){
+        today=[NSDate date];
+    }
+
+    NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier: NSGregorianCalendar];
+    [gregorian setTimeZone:[NSTimeZone timeZoneWithName:timeZone]];
     [formatterForCallingHours setTimeZone:[NSTimeZone timeZoneWithName:timeZone]];
+    NSDateComponents* components = [gregorian components:NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit|NSTimeZoneCalendarUnit fromDate:today];
+    NSString *year  = [NSString stringWithFormat:@"%d",[components year]];
+    NSString *month = [NSString stringWithFormat:@"%d",[components month]];
+    NSString *day   = [NSString stringWithFormat:@"%d",[components day]];
     NSDate *date =  [formatterForCallingHours dateFromString:[NSString stringWithFormat:@"%@-%@-%@ %@",year,month,day,hours]];
     
     return [NSNumber numberWithLong:[date timeIntervalSince1970]];
