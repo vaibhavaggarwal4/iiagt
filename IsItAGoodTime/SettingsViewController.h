@@ -7,8 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <CoreLocation/CoreLocation.h>
 
-@interface SettingsViewController : UIViewController
+@interface SettingsViewController : UIViewController <CLLocationManagerDelegate>
 -(void)dismissLoginViewController:(UIViewController *)loginViewController;
 @property (weak, nonatomic) IBOutlet UITableView *settingsTable;
 

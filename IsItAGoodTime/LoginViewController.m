@@ -212,8 +212,9 @@ UIBarButtonItem *previosButton;
     
     
     
-    
-    [self performSegueWithIdentifier:@"moreInfoAfterLoginSegue" sender:self];
+    [self.presentingViewController.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+
+   // [self performSegueWithIdentifier:@"verificationSegue" sender:self];
 
     
 }
@@ -240,6 +241,7 @@ UIBarButtonItem *previosButton;
     }
 }
 
+// TODO: Handle if user already exists
 -(void)signUpWithNumber:(NSString *) number name:(NSString *)name {
     
     NSMutableDictionary *params = [[NSMutableDictionary alloc]init];
@@ -268,7 +270,7 @@ UIBarButtonItem *previosButton;
                 [prefs setObject:appUserUniqueHash forKey:@"appUserUniqueHash"];
                 [prefs synchronize];
 
-                [self performSegueWithIdentifier:@"moreInfoAfterLoginSegue" sender:self];
+                [self performSegueWithIdentifier:@"verificationSegue" sender:self];
 
 
 
@@ -309,5 +311,7 @@ UIBarButtonItem *previosButton;
                      }];
 
 
+}
+- (IBAction)cancelButton:(id)sender {
 }
 @end

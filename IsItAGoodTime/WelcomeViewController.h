@@ -8,9 +8,11 @@
 
 #import <UIKit/UIKit.h>
 
-@interface WelcomeViewController : UIViewController
+@interface WelcomeViewController : UIViewController <UIScrollViewDelegate>
 - (IBAction)getStartedButton:(id)sender;
 @property (weak, nonatomic) IBOutlet UIButton *getStartedButton;
 @property (weak, nonatomic) IBOutlet UIView *buttonParentView;
+@property (weak, nonatomic) IBOutlet UIScrollView *tutorialScrollView;
 
+@property (weak, nonatomic) IBOutlet UIPageControl *tutorialPageControl;
 @end

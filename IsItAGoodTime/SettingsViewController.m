@@ -13,15 +13,20 @@
 #import "SettingCell.h"
 #import "AppDelegate.h"
 #import "WelcomeViewController.h"
+#import <CoreLocation/CoreLocation.h>
+#import "EDSunriseSet.h"
 @interface SettingsViewController ()
 @property(strong,nonatomic)NSMutableArray *userContactNames;
 @property(strong,nonatomic)NSArray *optionList;
+@property(strong,nonatomic)CLLocationManager *locationManager;
 @end
 
 @implementation SettingsViewController
 bool loggedIn= false;
 @synthesize optionList;
 @synthesize settingsTable;
+@synthesize locationManager;
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -218,6 +223,54 @@ bool loggedIn= false;
     
 }
 
+-(void)startSignificantLocationUpdates{
+    if(locationManager==NULL){
+    
+        locationManager = [[CLLocationManager alloc]init];
+    }
+    
+    locationManager.delegate=self;
+    [locationManager startMonitoringSignificantLocationChanges];
+
+    CLLocation *location = [locationManager location];
+    NSLog(@"%f,%f",location.coordinate.latitude, location.coordinate.longitude);
+    // After you've got the initial coordinates, turn the GPS off
+    [locationManager stopMonitoringSignificantLocationChanges];
+    
+    EDSunriseSet *sunsetSunriseTime = [EDSunriseSet sunrisesetWithTimezone:[NSTimeZone timeZoneWithName:@"America/Los_Angeles"] latitude:location.coordinate.latitude longitude:location.coordinate.longitude];
+    NSDateComponents *comp1 = sunsetSunriseTime.localSunrise;
+    NSLog(@"%ld",(long)[comp1 hour]);
+    NSDateComponents *comp2 = sunsetSunriseTime.localSunset;
+    NSLog(@"%ld",(long)[comp2 hour]);
+
+
+    
+}
+- (void)locationManager:(CLLocationManager *)manager
+
+     didUpdateLocations:(NSArray *)locations {
+    
+    // If it's a relatively recent event, turn off updates to save power.
+    
+    CLLocation* location = [locations lastObject];
+    
+    NSDate* eventDate = location.timestamp;
+    
+    NSTimeInterval howRecent = [eventDate timeIntervalSinceNow];
+    
+    if (abs(howRecent) < 15.0) {
+        
+        // If the event is recent, do something with it.
+        
+        NSLog(@"latitude %+.6f, longitude %+.6f\n",
+              
+              location.coordinate.latitude,
+              
+              location.coordinate.longitude);
+        
+    }
+    
+}
 
 
 

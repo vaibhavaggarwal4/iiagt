@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6D11837218334BCD009FFFC2 /* VerificationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D11837118334BCD009FFFC2 /* VerificationViewController.m */; };
 		6D122E21180A5F2500846464 /* WelcomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D122E20180A5F2500846464 /* WelcomeViewController.m */; };
 		6D122E24180A79C200846464 /* AdditionalInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D122E23180A79C200846464 /* AdditionalInfoViewController.m */; };
 		6D18E7B6181B73AA008866C8 /* CoreImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D18E7B5181B73AA008866C8 /* CoreImage.framework */; };
@@ -74,11 +75,22 @@
 		6DA9037617EBF59200728787 /* ContactsCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DA9037517EBF59200728787 /* ContactsCell.m */; };
 		6DA9037817EBF5B500728787 /* ContactsCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6DA9037717EBF5B500728787 /* ContactsCell.xib */; };
 		6DADA76518012D03001CAD03 /* SyncingPreferencesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DADA76418012D03001CAD03 /* SyncingPreferencesViewController.m */; };
+		6DB032341840596000A0CAF4 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DB032331840596000A0CAF4 /* CoreLocation.framework */; };
+		6DB0323B184069C800A0CAF4 /* EDSunriseSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DB03237184069C800A0CAF4 /* EDSunriseSet.m */; };
+		6DB0323C184069C800A0CAF4 /* EDSunriseSet.podspec in Resources */ = {isa = PBXBuildFile; fileRef = 6DB03238184069C800A0CAF4 /* EDSunriseSet.podspec */; };
+		6DB0323D184069C800A0CAF4 /* license.txt in Resources */ = {isa = PBXBuildFile; fileRef = 6DB03239184069C800A0CAF4 /* license.txt */; };
+		6DB0323E184069C800A0CAF4 /* README.markdown in Resources */ = {isa = PBXBuildFile; fileRef = 6DB0323A184069C800A0CAF4 /* README.markdown */; };
+		6DB0324318416E0800A0CAF4 /* apple.png in Resources */ = {isa = PBXBuildFile; fileRef = 6DB0323F18416E0800A0CAF4 /* apple.png */; };
+		6DB0324418416E0800A0CAF4 /* apple1.png in Resources */ = {isa = PBXBuildFile; fileRef = 6DB0324018416E0800A0CAF4 /* apple1.png */; };
+		6DB0324518416E0800A0CAF4 /* apple2.png in Resources */ = {isa = PBXBuildFile; fileRef = 6DB0324118416E0800A0CAF4 /* apple2.png */; };
+		6DB0324618416E0800A0CAF4 /* firefox.png in Resources */ = {isa = PBXBuildFile; fileRef = 6DB0324218416E0800A0CAF4 /* firefox.png */; };
 		6DBECA0F181F4876005CE0C6 /* AllContactsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DBECA0E181F4876005CE0C6 /* AllContactsTableViewController.m */; };
 		6DBECA12182087D8005CE0C6 /* CalendarEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DBECA11182087D8005CE0C6 /* CalendarEvent.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		6D11837018334BCD009FFFC2 /* VerificationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VerificationViewController.h; sourceTree = "<group>"; };
+		6D11837118334BCD009FFFC2 /* VerificationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VerificationViewController.m; sourceTree = "<group>"; };
 		6D122E1F180A5F2500846464 /* WelcomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WelcomeViewController.h; sourceTree = "<group>"; };
 		6D122E20180A5F2500846464 /* WelcomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WelcomeViewController.m; sourceTree = "<group>"; };
 		6D122E22180A79C200846464 /* AdditionalInfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AdditionalInfoViewController.h; sourceTree = "<group>"; };
@@ -174,6 +186,16 @@
 		6DA9037717EBF5B500728787 /* ContactsCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = ContactsCell.xib; path = ../ContactsCell.xib; sourceTree = "<group>"; };
 		6DADA76318012D03001CAD03 /* SyncingPreferencesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SyncingPreferencesViewController.h; sourceTree = "<group>"; };
 		6DADA76418012D03001CAD03 /* SyncingPreferencesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SyncingPreferencesViewController.m; sourceTree = "<group>"; };
+		6DB032331840596000A0CAF4 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		6DB03236184069C800A0CAF4 /* EDSunriseSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EDSunriseSet.h; sourceTree = "<group>"; };
+		6DB03237184069C800A0CAF4 /* EDSunriseSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EDSunriseSet.m; sourceTree = "<group>"; };
+		6DB03238184069C800A0CAF4 /* EDSunriseSet.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EDSunriseSet.podspec; sourceTree = "<group>"; };
+		6DB03239184069C800A0CAF4 /* license.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = license.txt; sourceTree = "<group>"; };
+		6DB0323A184069C800A0CAF4 /* README.markdown */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.markdown; sourceTree = "<group>"; };
+		6DB0323F18416E0800A0CAF4 /* apple.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = apple.png; sourceTree = "<group>"; };
+		6DB0324018416E0800A0CAF4 /* apple1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = apple1.png; sourceTree = "<group>"; };
+		6DB0324118416E0800A0CAF4 /* apple2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = apple2.png; sourceTree = "<group>"; };
+		6DB0324218416E0800A0CAF4 /* firefox.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = firefox.png; sourceTree = "<group>"; };
 		6DBECA0D181F4876005CE0C6 /* AllContactsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AllContactsTableViewController.h; sourceTree = "<group>"; };
 		6DBECA0E181F4876005CE0C6 /* AllContactsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AllContactsTableViewController.m; sourceTree = "<group>"; };
 		6DBECA10182087D8005CE0C6 /* CalendarEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CalendarEvent.h; sourceTree = "<group>"; };
@@ -185,6 +207,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6DB032341840596000A0CAF4 /* CoreLocation.framework in Frameworks */,
 				6D18E7B6181B73AA008866C8 /* CoreImage.framework in Frameworks */,
 				6DA4C9D017EFF9FF00C09B82 /* AddressBook.framework in Frameworks */,
 				6DA4C9D117EFF9FF00C09B82 /* AddressBookUI.framework in Frameworks */,
@@ -209,6 +232,8 @@
 				6D83244017F7D38300369FD4 /* LoginViewController.m */,
 				6D122E22180A79C200846464 /* AdditionalInfoViewController.h */,
 				6D122E23180A79C200846464 /* AdditionalInfoViewController.m */,
+				6D11837018334BCD009FFFC2 /* VerificationViewController.h */,
+				6D11837118334BCD009FFFC2 /* VerificationViewController.m */,
 			);
 			name = "Welcome and Login";
 			sourceTree = "<group>";
@@ -229,6 +254,10 @@
 				6D2E664B181CDCFE0032A988 /* busy.png */,
 				6D2E664C181CDCFE0032A988 /* car.png */,
 				6D2E664D181CDCFE0032A988 /* circle.png */,
+				6DB0323F18416E0800A0CAF4 /* apple.png */,
+				6DB0324018416E0800A0CAF4 /* apple1.png */,
+				6DB0324118416E0800A0CAF4 /* apple2.png */,
+				6DB0324218416E0800A0CAF4 /* firefox.png */,
 				6D2E664F181CDCFE0032A988 /* man.png */,
 				6D2E6650181CDCFE0032A988 /* no_image.png */,
 				6D2E6651181CDCFE0032A988 /* phone-book.png */,
@@ -307,6 +336,7 @@
 		6D9F53DF17E94AED006B993F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				6DB032331840596000A0CAF4 /* CoreLocation.framework */,
 				6D18E7B5181B73AA008866C8 /* CoreImage.framework */,
 				6D2739E617F28F2800D88904 /* EventKit.framework */,
 				6D2739E717F28F2800D88904 /* EventKitUI.framework */,
@@ -323,6 +353,8 @@
 		6D9F53E617E94AED006B993F /* IsItAGoodTime */ = {
 			isa = PBXGroup;
 			children = (
+				6D2E6648181CDCFE0032A988 /* Resources */,
+				6DB03235184069C800A0CAF4 /* EDSunriseSet */,
 				6D122E1E180A5EAC00846464 /* Welcome and Login */,
 				6DA9035117EBC74300728787 /* AFNetworking */,
 				6D83244717F8FD9D00369FD4 /* Settings */,
@@ -335,10 +367,7 @@
 				6DA9037517EBF59200728787 /* ContactsCell.m */,
 				6DA9034F17EBC69600728787 /* ContactsTableViewController.m */,
 				6DA9034E17EBC69600728787 /* ContactsTableViewController.h */,
-				6D9F53EF17E94AED006B993F /* AppDelegate.h */,
-				6D9F53F017E94AED006B993F /* AppDelegate.m */,
 				6D9F53F817E94AED006B993F /* MainStoryboard.storyboard */,
-				6D2E6648181CDCFE0032A988 /* Resources */,
 				6D9F53FB17E94AED006B993F /* ContactViewController.h */,
 				6D9F53FC17E94AED006B993F /* ContactViewController.m */,
 				6D2E6644181CCF750032A988 /* circle.png */,
@@ -356,6 +385,8 @@
 		6D9F53E717E94AED006B993F /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				6D9F53EF17E94AED006B993F /* AppDelegate.h */,
+				6D9F53F017E94AED006B993F /* AppDelegate.m */,
 				6D9F53E817E94AED006B993F /* IsItAGoodTime-Info.plist */,
 				6D9F53E917E94AED006B993F /* InfoPlist.strings */,
 				6D9F53EC17E94AED006B993F /* main.m */,
@@ -391,6 +422,19 @@
 				6DA9036417EBC74300728787 /* UIImageView+AFNetworking.m */,
 			);
 			path = AFNetworking;
+			sourceTree = "<group>";
+		};
+		6DB03235184069C800A0CAF4 /* EDSunriseSet */ = {
+			isa = PBXGroup;
+			children = (
+				6DB03236184069C800A0CAF4 /* EDSunriseSet.h */,
+				6DB03237184069C800A0CAF4 /* EDSunriseSet.m */,
+				6DB03238184069C800A0CAF4 /* EDSunriseSet.podspec */,
+				6DB03239184069C800A0CAF4 /* license.txt */,
+				6DB0323A184069C800A0CAF4 /* README.markdown */,
+			);
+			name = EDSunriseSet;
+			path = Resources/EDSunriseSet;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -456,11 +500,15 @@
 				6D2E6675181CDCFE0032A988 /* 3.tiff in Resources */,
 				6D2E666A181CDCFE0032A988 /* phone-book.png in Resources */,
 				6D9F53F317E94AED006B993F /* Default.png in Resources */,
+				6DB0323D184069C800A0CAF4 /* license.txt in Resources */,
+				6DB0323C184069C800A0CAF4 /* EDSunriseSet.podspec in Resources */,
 				6D2E6670181CDCFE0032A988 /* 5.tiff in Resources */,
 				6D83244317F8F60700369FD4 /* SettingCell.xib in Resources */,
+				6DB0324318416E0800A0CAF4 /* apple.png in Resources */,
 				6D2E6676181CDCFE0032A988 /* 4.tiff in Resources */,
 				6D2E6678181CDCFE0032A988 /* 6.tiff in Resources */,
 				6D9F53F517E94AED006B993F /* Default@2x.png in Resources */,
+				6DB0324618416E0800A0CAF4 /* firefox.png in Resources */,
 				6D2E6663181CDCFE0032A988 /* available.png in Resources */,
 				6D2E6664181CDCFE0032A988 /* busy.png in Resources */,
 				6D9F53F717E94AED006B993F /* Default-568h@2x.png in Resources */,
@@ -469,15 +517,18 @@
 				6D2E6679181CDCFE0032A988 /* 7.tiff in Resources */,
 				6D2E6665181CDCFE0032A988 /* car.png in Resources */,
 				6D2E666F181CDCFE0032A988 /* 4.tiff in Resources */,
+				6DB0324418416E0800A0CAF4 /* apple1.png in Resources */,
 				6D2E6668181CDCFE0032A988 /* man.png in Resources */,
 				6D9F53FF17E94AED006B993F /* first.png in Resources */,
 				6D2E6673181CDCFE0032A988 /* 1.tiff in Resources */,
 				6D9F540117E94AED006B993F /* first@2x.png in Resources */,
+				6DB0324518416E0800A0CAF4 /* apple2.png in Resources */,
 				6D9F540617E94AED006B993F /* second.png in Resources */,
 				6D2E666B181CDCFE0032A988 /* spanner.png in Resources */,
 				6D2E6672181CDCFE0032A988 /* 7.tiff in Resources */,
 				6D2E6669181CDCFE0032A988 /* no_image.png in Resources */,
 				6D9F540817E94AED006B993F /* second@2x.png in Resources */,
+				6DB0323E184069C800A0CAF4 /* README.markdown in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -509,11 +560,13 @@
 				6D83244117F7D38300369FD4 /* LoginViewController.m in Sources */,
 				6D9F540417E94AED006B993F /* SettingsViewController.m in Sources */,
 				6D122E21180A5F2500846464 /* WelcomeViewController.m in Sources */,
+				6D11837218334BCD009FFFC2 /* VerificationViewController.m in Sources */,
 				6DA9036A17EBC74300728787 /* AFPropertyListRequestOperation.m in Sources */,
 				6DADA76518012D03001CAD03 /* SyncingPreferencesViewController.m in Sources */,
 				6DA9036517EBC74300728787 /* AFHTTPClient.m in Sources */,
 				6DA9036617EBC74300728787 /* AFHTTPRequestOperation.m in Sources */,
 				6D122E24180A79C200846464 /* AdditionalInfoViewController.m in Sources */,
+				6DB0323B184069C800A0CAF4 /* EDSunriseSet.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

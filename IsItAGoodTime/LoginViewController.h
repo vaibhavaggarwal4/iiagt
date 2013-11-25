@@ -17,5 +17,6 @@
 - (IBAction)loginButton:(id)sender;
 - (IBAction)infoViewCloseButton:(id)sender;
 @property (weak, nonatomic) IBOutlet UILabel *numberFormatLabel;
+- (IBAction)cancelButton:(id)sender;
 
 @end
