@@ -61,7 +61,7 @@ NSDate *today;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-   
+    availabilityStatus=@"Available";
     contactsArray=[[NSMutableArray alloc]init];
     filteredContacts=[[NSMutableArray alloc]init];
     
